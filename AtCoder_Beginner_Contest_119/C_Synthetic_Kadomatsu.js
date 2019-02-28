@@ -1,20 +1,21 @@
-var lines =[];
+var lines = [];
 
 var N, A, B, C;
-var l
+var l, f
 var result = Infinity;
 
 var readline = require("readline");
+
 var rl = readline.createInterface({
-  input:  process.stdin,
+  input: process.stdin,
   output: process.stdout
 });
 
-rl.on('line',function(x){
+rl.on('line', function (x) {
   lines.push(x);
 });
 
-rl.on('close',function(){
+rl.on('close', function () {
 
   var tmp = lines.shift();
   N = Number(tmp.split(" ")[0]);
@@ -23,47 +24,40 @@ rl.on('close',function(){
   C = Number(tmp.split(" ")[3]);
 
   l = Array(N);
+  f = Array(N);
+  f.fill(Infinity);
 
-  for(var i=0;i<N;i++){l[i]=Number(lines[i]);}
+  for (var i = 0; i < N; i++) { l[i] = Number(lines[i]); }
 
-  dfs(0,[])
-  console.log(result);
+  console.log(dfs(0, 0, 0, 0));
 });
 
-function dfs(n,bamboo){
-    if(n === N){calc(bamboo);return(0);}
 
-    for(var i=0;i<4;i++){
-        bamboo[n]=i;
-        dfs(n+1,bamboo);
-    }
-}
 
-function calc(bamboo){
-    var a = 0;
-    var b = 0;
-    var c = 0;  
-    var counter_a = 0;
-    var counter_b = 0;
-    var counter_c = 0;
-    
-    for(var i=0;i<N;i++){
-        // Aに利用
-        if(bamboo[i]===0){if(l[i] !== 0){a = a + l[i];counter_a++;}}
-        // Bに利用
-        else if(bamboo[i]===1){if(l[i] !== 0){b = b + l[i];counter_b++;}}
-        // Cに利用
-        else if(bamboo[i]===2){if(l[i] !== 0){c = c + l[i];counter_c++;}}
-        // 不要
-        else{}
+function dfs(n, a, b, c) {
+  if (n === N) {
+    if (a === 0 || b === 0 || c === 0) { return (Infinity); }
+    else {
+      return(Math.abs(a - A) + Math.abs(b - B) + Math.abs(c - C));
     }
-    counter_a -1 < 0 ? counter_a = 0:counter_a = counter_a -1;
-    counter_b -1 < 0 ? counter_b = 0:counter_b = counter_b -1;
-    counter_c -1 < 0 ? counter_c = 0:counter_c = counter_c -1;
+  }
+  if(f[n]!==Infinity){
+  //   console.log("f[n]",n,f[n]);    
+  }
+  var res_a = dfs(n + 1, a + l[n], b, c) + (a != 0 ? 10 : 0);    // l[i]をAに加える
+  // console.log("res_a",n,a,b,c,res_a);    
+  
+  var res_b = dfs(n + 1, a, b + l[n], c) + (b != 0 ? 10 : 0);    // l[i]をBに加える
+  // console.log("res_b",n,a,b,c,res_b);    
+  
+  var res_c = dfs(n + 1, a, b, c + l[n]) + (c != 0 ? 10 : 0);    // l[i]をCに加える
+  // console.log("res_c",n,a,b,c,res_c); 
 
-    if(a>0 && b>0 && c>0){
-        if(result > Math.abs(A-a) + Math.abs(B-b) + Math.abs(C-c) + (counter_a + counter_b + counter_c)*10){
-            result = Math.abs(A-a) + Math.abs(B-b) + Math.abs(C-c) + (counter_a + counter_b + counter_c)*10;
-        }
-    }
+  var res_x = dfs(n + 1, a, b, c);                               // l[i]加えない
+  // console.log("res_x",n,a,b,c,res_x); 
+
+
+  f[n] = Math.min(res_a, res_b, res_c, res_x);
+  // console.log(res_a, res_b, res_c, res_x,f[n]);
+  return (f[n]);
 }
