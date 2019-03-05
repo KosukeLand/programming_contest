@@ -18,9 +18,12 @@ rl.on('close', function () {
 
     N = Number(lines[0].split(" ")[0]);
     M = Number(lines[0].split(" ")[1]);
-    a = Array(M + 1);
+    var cont = "";
 
+    a = Array(M + 1);
     a[0] = { number: 0, match: 0 };
+
+    dp = Array(N + 1); dp.fill("");
 
     var tmp = lines[1].split(" ");
     for (var i = 1; i <= M; i++) {
@@ -28,10 +31,10 @@ rl.on('close', function () {
             number: Number(tmp[i - 1]),
             match: Number(number[tmp[i - 1]]),
         }
-
+        if (dp[a[i].match] == "" || dp[a[i].match] < a[i].number.toString()){
+            dp[a[i].match] = a[i].number.toString();
+        }
     }
-    var cont = "";
-    dp = Array(N + 1); dp.fill("");
 
     // w : Weigt
     // n : Match Number
@@ -40,6 +43,8 @@ rl.on('close', function () {
             match = w - a[n].match;
 
             if (match < 0) { continue; }
+            if (dp[match] === "") { continue; }
+
             else {
                 cont = dp[match] + a[n].number;
                 if (dp[w].length < cont.length || (dp[w].length === cont.length && dp[w] < cont)) {
