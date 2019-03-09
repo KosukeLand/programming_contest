@@ -67,7 +67,7 @@ function calc(comb) {
         // ボーナス取得問題は，解答済み
         if (comb[i - 1] === 1) { var div = 0; }
         
-        //ボーナス見取得問題は，問題数を超えないだけ解答
+        //ボーナス未取得問題は，問題数を超えないだけ解答
         else { var div = Math.floor((g - sum) / (i * 100)) < p[i].n - 1 ? Math.floor((g - sum) / (i * 100)) : p[i].n - 1; }
 
         counter = counter + div;
