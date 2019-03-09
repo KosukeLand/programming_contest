@@ -35,6 +35,7 @@ rl.on('close', function () {
     console.log(result);
 });
 
+// ボーナスに着目した深さ優先全探索
 function dfs(n, comb) {
     if (n === d) { calc(comb); return (0); }
     for (var i = 0; i < 2; i++) {
@@ -42,10 +43,12 @@ function dfs(n, comb) {
         dfs(n + 1, comb);
     }
 }
+
 function calc(comb) {
     var counter = 0; var sum = 0;
     var bonus = 0; var point = 0;
 
+    // 取得ボーナス + ボーナス取得するために解答した問題のポイント
     for (var i = d; i > 0; i--) {
         if (comb[i - 1] === 1) {
             bonus = c[i];
@@ -56,14 +59,21 @@ function calc(comb) {
         }
     }
 
+    // 解答した問題のポイント
     for (var i = d; i > 0; i--) {
+        // 総合スコアに到達していた場合，continue
         if (g - sum <= 0) { continue; }
+        
+        // ボーナス取得問題は，解答済み
         if (comb[i - 1] === 1) { var div = 0; }
+        
+        //ボーナス見取得問題は，問題数を超えないだけ解答
         else { var div = Math.floor((g - sum) / (i * 100)) < p[i].n - 1 ? Math.floor((g - sum) / (i * 100)) : p[i].n - 1; }
 
         counter = counter + div;
         sum = sum + div * i * 100;
     }
-
+    
+    // 回答数が，現在の最小値よりも下回ったらresultを上書き
     if (g <= sum && counter < result) { result = counter; }
 }
