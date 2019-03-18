@@ -11,23 +11,22 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var MOD = Math.pow(10,9)+7;
+    var MOD = Math.pow(10, 9) + 7;
 
     var N = lines[0];
     var S = lines[1].split("");
     var result = 1;
-    var alphabet = {};
+    var alphabet = Array(26).fill(0);
 
     for (var i = 0; i < N; i++) {
-        if ((alphabet[S[i]]) === undefined) {
-            alphabet[S[i]] = 0;
-        }
-        alphabet[S[i]]++;
+        // aは Unicodeで 97
+        var tmp = S[i].charCodeAt() - 97;
+        alphabet[tmp]++;
     }
 
-    for (var i = 0; i < Object.keys(alphabet).length; i++) {
-        result = result * (alphabet[S[i]] + 1);
+    for (var i = 0; i < 26; i++) {
+        result = result * (alphabet[i] + 1);
         result = result % MOD;
     }
-    console.log((result - 1) % MOD);
+    console.log(result - 1);
 });
