@@ -30,24 +30,17 @@ rl.on('close', function () {
     for (var a = 0; a < Q; a++) {
         var Moji = S.slice(l[a] - 1, r[a]);
 
-        var dp = Array(3).fill(0);
-        for (var i = 0; i <= 2; i++) {
-            dp[i] = Array(Moji.length + 1).fill(0);
-        }
+        var right = 0; var left = 0;
+        var i = 0;
 
-
-        for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < Moji.length; j++) {
-                if (X[i] === Moji[j]) {
-                    dp[i + 1][j + 1] = dp[i][j] + 1;
-                    if (dp[i + 1][j + 1] === 2) { result++; }
-                }
-                else {
-                    dp[i + 1][j + 1] = 0;
-                }
-            }
+        while (right !== Moji.length - 1) {
+            if (Moji[i] === "A") { right++; }
+            else if (Moji[i] === "C" && right !== left) { result++; left = right; }
+            else { right = left; right++; left++; }
+            i++;
         }
-        console.log(result);
-        result = 0;
+    
+    console.log(result);
+    result = 0;
     }
 });
