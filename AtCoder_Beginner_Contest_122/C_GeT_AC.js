@@ -16,7 +16,6 @@ rl.on('close', function () {
     var N = Number(tmp[0]); var Q = Number(tmp[1]);
 
     var S = lines.shift();
-    var X = ["A", "C"];
 
     var l = Array(Q); var r = Array(Q);
     for (var i = 0; i < Q; i++) {
@@ -25,22 +24,14 @@ rl.on('close', function () {
         r[i] = Number(tmp[1]);
     }
 
-    var result = 0;
-
-    for (var a = 0; a < Q; a++) {
-        var Moji = S.slice(l[a] - 1, r[a]);
-
-        var right = 0; var left = 0;
-        var i = 0;
-
-        while (right !== Moji.length - 1) {
-            if (Moji[i] === "A") { right++; }
-            else if (Moji[i] === "C" && right !== left) { result++; left = right; }
-            else { right = left; right++; left++; }
-            i++;
-        }
+    var sum = Array(N + 1).fill(0);
     
-    console.log(result);
-    result = 0;
+    for (var i = 1; i < N; i++) {
+        sum[i + 1] = sum[i];
+        if (S[i - 1] === "A" && S[i] === "C") { sum[i + 1]++; }
+    }
+
+    for (var i = 0; i < Q; i++) {
+        console.log(sum[r[i]] - sum[l[i]]);
     }
 });
