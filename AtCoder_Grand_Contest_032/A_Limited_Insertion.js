@@ -21,7 +21,7 @@ rl.on('close', function () {
         b[i + 1] = Number(tmp[i]);
     }
 
-    var result = "";
+    var result = [];
 
     for (var i = 1; i <= N; i++) {
         var max = -1;
@@ -29,15 +29,14 @@ rl.on('close', function () {
             if (b[j] === j) { max = j; }
         }
         if (max !== -1) {
-            result = b.splice(max, 1) + result;
+            result.push(b.splice(max, 1));
         }
         else {
             console.log("-1");
             return (0);
         }
     }
-    result = result.split("");
-    for (var i = 0; i < result.length; i++) {
-        console.log(result[i]);
+    for (var i = 0; i < N; i++) {
+        console.log(Number(result.pop()));
     }
 });
