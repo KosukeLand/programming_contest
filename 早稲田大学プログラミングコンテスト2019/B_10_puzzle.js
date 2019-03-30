@@ -31,7 +31,7 @@ rl.on('close', function () {
             if (A[i][j] === 5) { five = true; }
         }
     }
-    if (zero === true) { console.log("Yes", 0); return (0); }
+    if (zero === true) { console.log("Yes", result); return (0); }
     if (five === false) { console.log("No"); return (0); }
 
     for (var i = 0; i < H; i++) {
@@ -51,18 +51,18 @@ rl.on('close', function () {
 });
 
 function dfs(i, j, max) {
-    if (i < 0 || j < 0 || H <= i || W <= j) { return (0); }
-    else if (A[i][j] < 5) { return (0); }
+
+    if (i < 0 || j < 0 || H <= i || W <= j) { return (max); }
+    else if (A[i][j] === 5) { return (max); }
     else {
         if (max < A[i][j]) { max = A[i][j]; }
-        A[i][j] = 0;
+        A[i][j] = 5;
 
         var tmp_max;
         tmp_max = dfs(i, j - 1, max); if (max < tmp_max) { max = tmp_max; }
         tmp_max = dfs(i, j + 1, max); if (max < tmp_max) { max = tmp_max; }
         tmp_max = dfs(i - 1, j, max); if (max < tmp_max) { max = tmp_max; }
         tmp_max = dfs(i + 1, j, max); if (max < tmp_max) { max = tmp_max; }
-
     }
     return (max);
 }
