@@ -51,7 +51,6 @@ rl.on('close', function () {
 });
 
 function dfs(i, j, max) {
-
     if (i < 0 || j < 0 || H <= i || W <= j) { return (max); }
     else if (A[i][j] === 5) { return (max); }
     else {
