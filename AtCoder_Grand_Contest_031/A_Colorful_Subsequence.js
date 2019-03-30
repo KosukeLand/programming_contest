@@ -15,18 +15,22 @@ rl.on('close', function () {
 
     var N = lines[0];
     var S = lines[1].split("");
+
+    var alphabet = {};
+
     var result = 1;
-    var alphabet = Array(26).fill(0);
 
-    for (var i = 0; i < N; i++) {
-        // aは Unicodeで 97
-        var tmp = S[i].charCodeAt() - 97;
-        alphabet[tmp]++;
-    }
+    // baa   = 2C1 * 3C1 - 1 = 5
+    // baaa  = 2C1 * 4C1 - 1 = 7
+    // bcaaa = 2C1 * 2C1 * 4C1 -1 = 15
+    // aabbc = 3C1 * 3C1 * 2C1 -1 = 17
 
-    for (var i = 0; i < 26; i++) {
-        result = result * (alphabet[i] + 1);
-        result = result % MOD;
-    }
+
+    for (var i = 0; i < N; i++) { alphabet[S[i]] === undefined ? alphabet[S[i]] = 1 : alphabet[S[i]]++ }
+    Object.keys(alphabet).forEach(function (key) {
+        result *= alphabet[key] + 1;
+        result %= MOD;  
+    });
     console.log(result - 1);
+
 });
