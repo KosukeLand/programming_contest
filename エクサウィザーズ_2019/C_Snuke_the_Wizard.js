@@ -1,6 +1,7 @@
 var lines = [];
 var readline = require('readline');
-
+var N; var Q; var T; var D; var S;
+var golem;
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -12,14 +13,12 @@ rl.on('line', function (x) {
 
 rl.on('close', function () {
     var tmp = lines.shift().split(" ");
-    var N = Number(tmp[0]);
-    var Q = Number(tmp[1]);
-    var T = Array(Q); var D = Array(Q);
-    var result = N;
+    N = Number(tmp[0]); Q = Number(tmp[1]);
+    T = Array(Q); D = Array(Q);
 
-    var golem = {};
+    golem = {};
+    S = lines.shift().split("");
 
-    var S = lines.shift().split("");
     for (var i = 0; i < N; i++) {
         golem[i] = {
             now: i,
@@ -29,29 +28,56 @@ rl.on('close', function () {
 
     for (var i = 0; i < Q; i++) {
         tmp = lines[i].split(" ");
-        T[i] = tmp[0];
-        D[i] = tmp[1];
+        T[i] = tmp[0]; D[i] = tmp[1];
     }
-    
-    // ゴーレムを移動
-    for (var i = 0; i < Q; i++) {
-        if (D[i] === "L") {
-            // T[i]上のゴーレムを全て左へ移動
-            for (var j = 0; j < N; j++) {
-                if (golem[j].alphabet === T[i]) { golem[j].now--; golem[j].alphabet = S[golem[j].now]; }
-                // ゴーレムがマスよりも左側に移動した場合，ゴーレムは消滅
-                if (golem[j].now < 0) { golem[j].now = NaN; result--; }
-            }
-        }
-        else {
-            // T[i]上のゴーレムを全て右へ動かす
-            for (var j = 0; j < N; j++) {
-                if (golem[j].alphabet === T[i]) { golem[j].now++; golem[j].alphabet = S[golem[j].now]; }
-                // ゴーレムがマスよりも右側に移動した場合，ゴーレムは消滅
-                if (N - 1 < golem[j].now) { golem[j].now = NaN; result--; }
-            }
-        }
-    }
+    // 左から飛び出すゴーレムは左から何番目？
+    a = Math.ceil(binary_search(-1, N, "L"));
 
-    console.log(result);
+    // 右から飛び出すゴーレムは左から何番目？
+    b = Math.ceil(binary_search(-1, N, "R"));
+
+    // リターンされた値が -1 or Nの場合，落ちるゴーレムは0
+    console.log(b - a)
+
+
 });
+
+function binary_search(left, right, M) {
+    var ave = (left + right) / 2;
+    var result = ave;
+
+    if (left + 1 < right) {
+        ave = Math.floor(ave);
+
+        for (var i = 0; i < Q; i++) {
+
+            if (T[i] === golem[ave].alphabet) {
+                if (D[i] === "R") { golem[ave].now++; golem[ave].alphabet = S[golem[ave].now]; }
+                else { golem[ave].now--; golem[ave].alphabet = S[golem[ave].now]; }
+            }
+
+            // 左から飛び出したら
+            if (golem[ave].now < 0) {
+                result = binary_search(ave, right, M);
+                break;
+            }
+            // 右からから飛び出したら
+            else if (N - 1 < golem[ave].now) {
+                result = binary_search(left, ave, M);
+                break;
+            }
+            // 右から飛び出さなかったら
+            else if (i === Q - 1 && M === "R") {
+                result = binary_search(ave, right, M);
+            }
+            // 左から飛び出さなかったら
+            else if (i === Q - 1 && M === "L") {
+                result = binary_search(left, ave, M);
+            }
+            else {
+
+            }
+        }
+    }
+    return (result);
+}
