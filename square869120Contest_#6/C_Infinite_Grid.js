@@ -20,7 +20,7 @@ rl.on('close', function () {
     var c = Array(H).fill(0);
 
     c = c.map(function (value, index, array) {
-        return (array[index] = Array(W));
+        return (array[index] = Array(W * H));
     });
 
     for (var i = 0; i < H; i++) {
@@ -30,25 +30,20 @@ rl.on('close', function () {
             c[i][j] = cnt[j % W];
         }
     }
-    console.log(bfs(H, W * H, c.concat()));
+    console.log(dfs(0, 0, c.concat()));
 
 });
 
-function bfs(h, w, c) {
-    var q = [[0, 0]];
-    var m = Array(w).fill(0).map(function (value) { value = Array(h).fill(0); return (value); })
+function dfs(h, w, comb) {
+    if (H - 1 === h && W * H - 1 === w) { return ("Yay!"); }
+    if (H - 1 < h || W * H - 1 < w) { return (":("); }
+    if (comb[h][w] === "#") { return (":("); }
 
-    while (q.length) {
-        var t = q.pop();
-        var x = t[1], y = t[0];
+    var x = dfs(h + 1, w, comb.concat());
+    if (x === "Yay!") { return ("Yay!"); }
 
-        if (x === w - 1 && y === h - 1) { return ("Yay!"); }
-        if (m[y][x] === 1) { continue; }
+    var y = dfs(h, w + 1, comb.concat());
+    if (y === "Yay!") { return ("Yay!"); }
 
-        m[y][x] = 1;
-
-        if (x < w - 1) { if (c[y][x + 1] === '.') { q.push([y, x + 1]); } }
-        if (y < h - 1) { if (c[y + 1][x] === '.') { q.push([y + 1, x]); } }
-    }
     return (":(");
 }
