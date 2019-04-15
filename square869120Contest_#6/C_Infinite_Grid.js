@@ -20,7 +20,7 @@ rl.on('close', function () {
     var c = Array(H).fill(0);
 
     c = c.map(function (value, index, array) {
-        return (array[index] = Array(W));
+        return (array[index] = Array(W * H));
     });
 
     for (var i = 0; i < H; i++) {
