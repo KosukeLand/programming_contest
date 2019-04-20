@@ -19,7 +19,7 @@ rl.on('close', function () {
 
     var result = 0;
 
-    var S = dfs(Math.floor(N)).split("");
+    var S = dfs(N).split("");
 
     for (var i = S.length - X; i < S.length; i++) {
         if (S[i] === '1') { result++; }
