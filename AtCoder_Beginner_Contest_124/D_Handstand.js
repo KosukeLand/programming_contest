@@ -1,4 +1,5 @@
 var lines = [];
+var result = 0;
 
 var readline = require('readline');
 var rl = readline.createInterface({
@@ -11,58 +12,39 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var tmp_1 = lines.shift().split(" ");
-    var N = Number(tmp_1[0]);
-    var K = Number(tmp_1[1]);
+    var N = Number(lines[0].split(" ")[0]);
+    var K = Number(lines[0].split(" ")[1]);
+    var S = lines[1].split("").map(value => Number(value));
 
-    var v = lines[0].split("");
-
-    var Nums = [];
+    var v = [0]; var sum = [];
     var now = 1;
-    var cnt = 0;
 
-    // 1-0-1-0-1
-    for (var i = 0; i < N; i++) {
-        if (v[i] === now.toString()) { cnt++; }
+    if (S[0] === now) { j = 0; v[j] = 1; }
+    else { now = 0; j = 1; v[j] = 1; }
+
+    // 1-0-1-0-...-1って感じの配列がほしい
+    for (var i = 1; i < N; i++) {
+        if (S[i] === now) {
+            v[j]++;
+        }
         else {
-            Nums.push(cnt);
-            now = 1 - now; // 0-1反転
-            cnt = 1;
+            now = 1 - now;
+            j++; v[j] = 1;
         }
     }
+    if (v.length % 2 === 0) { v.push(0) }
 
-    // cntが0でなければ，配列に加える
-    if (cnt != 0) { Nums.push(cnt); }
+    console.log(v);
 
-    // 1-0-1-0-...-1のような配列を用意する
-    if (Nums.length % 2 === 0) { Nums.push(0); }
+    // 1-0-1...の1から始まるので，偶数番目のみチェック
+    for (var i = 0; i < v.length; i = i + 2) {
+        var left = i; var cnt = 0;
+        var right = Math.min(i + 2 * K, v.length - 1);
 
-
-    // 累積和配列定義
-    var sum = Array(Nums.length + 1).fill(0);
-    
-    // 累積和配列の生成
-    for (var i = 0; i <= Nums.length; i++) {
-        if (i === 0) { sum[i] = 0; }
-        else {
-            sum[i] += sum[i - 1] + Nums[i - 1];
+        for (var j = left; j <= right; j++) {
+            cnt += v[j];
         }
+        result = Math.max(cnt, result);
     }
-    
-    var cnt = 0; var max = 1;
-
-    if (sum.length - 2 * K > 0) {
-        // 1の固まっている箇所から調査する．なので，i = i + 2
-        for (var i = 0; i < sum.length - 2 * K; i = i + 2) {
-            cnt = sum[i + 2 * K + 1] - sum[i];
-
-            if (max < cnt + 1) { max = cnt; }
-        }
-    }
-    // 入れ替え回数(K)よりも0が固まっている箇所が少ない場合，全て逆立ちさせることができる．
-    else {
-        max = sum[sum.length - 1];
-    }
-
-    console.log(max);
+    console.log(result);
 });

@@ -13,21 +13,22 @@ rl.on('line', function (x) {
 rl.on('close', function () {
     var S = lines[0]; var T = lines[1];
     var len = S.length;
-    
-    var alphabet = {}
+
+    var start = Array(26).fill(-1);
+    var goal = Array(26).fill(-1);
 
     for (var i = 0; i < len; i++) {
-        if (alphabet[S[i]] === undefined) {
-            alphabet[S[i]] = { end: T[i] };
-            alphabet[T[i]] = { end: S[i] };
-        }
-        else {
-            if (alphabet[S[i]].end !== T[i]) {
-                // console.log(alphabet);
+        var a = S.charCodeAt(i) - 97;
+        var b = T.charCodeAt(i) - 97;
+    
+        if (start[a] !== -1 || goal[b] !== -1) {
+            if (start[a] !== b || goal[b] !== a) {
                 console.log("No"); return (0);
             }
         }
+        else {
+            start[a] = b; goal[b] = a;
+        }
     }
-    // console.log(alphabet);
     console.log("Yes");
 });
