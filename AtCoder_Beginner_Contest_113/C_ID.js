@@ -1,5 +1,5 @@
 var lines = [];
-
+var result = [];
 var readline = require("readline");
 
 var rl = readline.createInterface({
@@ -12,53 +12,34 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var tmp = lines.shift();
-    var n = Number(tmp.split(" ")[0]);
-    var m = Number(tmp.split(" ")[1]);
+    var N = Number(lines[0].split(" ")[0]);
+    var M = Number(lines[0].split(" ")[1]);
 
-    var city = Array(m);
-    var result = "";
+    lines.shift();
 
-    for (var i = 0; i < m; i++) {
-        tmp = lines[i].split(" ");
-        city[i] = {
-            "i": i,
-            "P": Number(tmp[0]),
-            "Y": Number(tmp[1]),
-            "KenNum": "",
-            "ShiNum": "",
-        }
+    var array = lines.map(value => value.split(" ").map(value => Number(value)));
+
+    for (var i = 0; i < M; i++) {
+        array[i].push(i);
     }
 
-    city.sort(function (a, b) {
-        if (a.P < b.P) return -1;
-        if (a.P > b.P) return 1;
-        if (a.Y < b.Y) return -1;
-        if (a.Y > b.Y) return 1;
-        return 0;
-    });
+    var city = array.concat().sort((a, b) => a[1] - b[1]);
+    ite = Array(N + 1).fill(0);
+    for (var i = 0; i < M; i++) {
+        var ken = city[i][0].toString(); var shi = (ite[city[i][0]] + 1).toString();
 
-    var ken  = 1;
-    var shi  = 1;
-    var loop = 0;
-    
-    for (var i=0;i<m;i++) {
-        if(ken === city[i].P) {
-            city[i].KenNum = ken.toString();
-            loop = 6 - ken.toString().length;
+        len = ken.length
+        for (var x = 0; x < 6 - len; x++) { ken = "0" + ken; }
 
-            for (var k = 0; k < loop; k++) { city[i].KenNum = "0" + city[i].KenNum; }
+        len = shi.length
+        for (var x = 0; x < 6 - len; x++) { shi = "0" + shi; }
 
-            city[i].ShiNum = shi.toString();
-            loop = 6 - shi.toString().length;
-
-            for (var k = 0; k < loop; k++) { city[i].ShiNum = "0" + city[i].ShiNum; }
-            shi++;
-        }
-        else{ken++; shi=1; i--;}
+        city[i].push(ken + shi);
+        ite[city[i][0]]++;
     }
-    city.sort(function(a,b){return(a.i-b.i)});
-    for (var i=0;i<m;i++) {
-        console.log(city[i].KenNum+city[i].ShiNum);
+
+    city.sort((a, b) => a[2] - b[2]);
+    for (var i = 0; i < M; i++) {
+        console.log(city[i][3]);
     }
 });

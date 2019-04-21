@@ -1,4 +1,4 @@
-var lines = [];
+var lines = []; var result = Infinity;
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -11,25 +11,18 @@ rl.on('line', function (x) {
 })
 
 rl.on('close', function () {
-    var n = Number(lines.shift());
-    var tmp = lines.shift().split(" ");
+    var N = Number(lines[0]);
+    var T = Number(lines[1].split(" ")[0]);
+    var A = Number(lines[1].split(" ")[1]);
 
-    var t = Number(tmp[0]);
-    var a = Number(tmp[1]);
-    var result = {
-        i: 0,
-        temp: Infinity,
-    };
+    var H = lines[2].split(" ").map(value => Number(value));
 
-    tmp = lines.shift().split(" ");
-    for (var i = 0; i < n; i++) {
+    for (var i = 0; i < N; i++) {
+        if (Math.abs(result - A) > Math.abs(T - H[i] * 0.006 - A)) {
+            result = T - H[i] * 0.006;
+            cnt = i;
 
-        if (Math.abs(a - (t - Number(tmp[i]) * 0.006)) < result.temp) {
-            result.i = i;
-            result.temp = Math.abs(a - (t - Number(tmp[i]) * 0.006));
         }
     }
-
-    console.log(result.i + 1);
-
+    console.log(cnt + 1);
 });
