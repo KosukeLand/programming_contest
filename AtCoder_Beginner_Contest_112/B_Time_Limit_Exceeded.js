@@ -1,30 +1,26 @@
-var lines =[];
+var lines = []; var result = Infinity;
 var readline = require('readline');
+
 
 var rl = readline.createInterface({
     input: process.stdin,
-    output:process.stdout,
+    output: process.stdout,
 });
 
-rl.on('line',function(x){
+rl.on('line', function (x) {
     lines.push(x);
 });
 
-rl.on('close',function(){
+rl.on('close', function () {
+    var N = Number(lines[0].split(" ")[0]);
+    var T = Number(lines[0].split(" ")[1]);
 
-    var tmp = lines.shift();
-    var N = Number(tmp.split(" ")[0]);
-    var T = Number(tmp.split(" ")[1]);
-    var c,t;
-    var result = Infinity;
+    lines.shift();
 
-    
-    for(var i=0;i<N;i++){
-        c=Number(lines[i].split(" ")[0]);
-        t=Number(lines[i].split(" ")[1]);
-        
-        if(t<=T && c<result){result = c}
+    var array = lines.map(value => value.split(" ").map(value => Number(value)));
+
+    for (var i of array) {
+        if (i[1] <= T) { result = Math.min(result, i[0]); }
     }
-    if(result != Infinity){console.log(result);}
-    else{console.log("TLE");}
+    result !== Infinity ? console.log(result): console.log("TLE");
 });
