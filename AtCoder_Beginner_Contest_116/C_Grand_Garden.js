@@ -22,7 +22,7 @@ rl.on('close', function () {
     for (var j = 0; j < N; j++) {
       // 120みたいにh[j]以前に0がなければ，result++
       if (h[j] === 0 && zero === false) { result++; zero = true; }
-      // h[j]がよりも大きかったら，1cm縮む
+      // h[j]が1よりも大きかったら，1cm縮む
       if (1 <= h[j]) { h[j]--; zero = false }
 
     }

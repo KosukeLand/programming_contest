@@ -1,4 +1,6 @@
-var lines = [];
+var lines = []; var MOD = Math.pow(10, 9) + 7;
+var result = 0;
+
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -11,46 +13,36 @@ rl.on('line', function (x) {
 })
 
 rl.on('close', function () {
-    var MOD = Math.pow(10, 9) + 7;
-    var N = Number(lines.shift());
-    var C = Array(N);
+    var N = Number(lines[0]); lines.shift();
+    var C = lines.map(value => Number(value));
+    var a = Array(2e5).fill(0).map(value => []);
+
 
     for (var i = 0; i < N; i++) {
-        C[i] = Number(lines[i]);
+        a[C[i] - 1].push(i);
     }
 
-    var number = {}; var result = 0;
-    // 1,2,1,2,2
-    // 2,1,2,1,2,1 = (2,1,2,1,2,1), (2,2,2,1,2,1), (2,1,2,1,1,1), (2,2,2,1,1,1), (2,1,1,1,2,1), (2,1,2,2,2,1), (2,1,1,1,1,1), (2,2,2,2,2,1)
-    // 1,2,1,2,2,1 = (1,2,1,2,2,1), (1,1,1,2,2,1), (1,2,2,2,2,1), (1,1,1,1,1,1), (1,2,1,1,1,1)
-    // 1,1,2,1,2,1 = (1,1,2,1,2,1), (1,1,1,1,2,1), (1,1,2,2,2,1), (1,1,2,1,1,1), (1,1,1,1,1,1)
-    // x,x,x,x,x,x,x (4)
-    // x,x,x,x,x,x,x,x (6)
-    // x,x,x,x,x,x,x,x,x (9)
-    for (var i = 0; i < N - 1; i++) {
-        if (C[i] !== C[i + 1]) { number[C[i]] === undefined ? number[C[i]] = 1 : number[C[i]]++; }
+    for (var i = 0; i < 2e5; i++) {
+        a[i].reverse(); // 配列を反転   
+        a[i].pop();
+        //a[i].unshift()
     }
-    // 文字列の最後C[N-1]は無条件にインクリメントする
-    number[C[N - 1]]++;
 
-    // 同じ数字を無作為に2つ取得する(Combination)
-    Object.keys(number).forEach(function (keys) {
-        result += Co(number[keys], 2);
-        result %= MOD;
-    });
+    console.log(a);
+    var dp = Array(N).fill(0);
+    dp[0] = 1;
 
-    // 初期状態もカウントしていいので +1
-    console.log(result + 1);
+    var t = a[C[0] - 1].pop(); if (0 < t) { dp[t] = 1; }
+
+    for (var i = 1; i < N; i++) {
+        dp[i] += dp[i - 1];
+        dp[i] %= MOD;
+        
+        t = a[C[i] - 1].pop();
+        console.log(i, C[i] - 1, t);
+        
+        if (i + 1 < t) { dp[t] = dp[i] }
+    }
+    console.log(dp)
+
 });
-
-function P(n, m) {
-    var result = 1; counter = 0;
-    while (counter < m) {
-        result *= n;
-        n--; counter++;
-    }
-    return (result);
-}
-function Co(n, m) {
-    return (P(n, m) / P(m, m));
-}

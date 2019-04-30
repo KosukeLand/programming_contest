@@ -11,20 +11,14 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var v = [];
-    var N = lines.shift();
-    N = Number(N);
+    var N = Number(lines[0]);
+    var A = Number(lines[1]);
+    var B = Number(lines[2]);
+    var C = Number(lines[3]);
+    var D = Number(lines[4]);
+    var E = Number(lines[5]);
 
-    for (var i = 0; i < 5; i++) {
-        v[i] = Number(lines[i]);
-    }
+    var min = Math.min(A, B, C, D, E);
 
-    var result = 0;
-    var min = Infinity; var j = 0;
-
-    for (var i = 0; i < 5; i++) { if (v[i] < min) { min = v[i]; j = i; } }
-
-    result = Math.ceil(N / v[j]) + 4;
-    console.log(result);
-
+    console.log(4 + Math.ceil(N / min));
 });

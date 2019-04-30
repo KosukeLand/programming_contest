@@ -1,38 +1,33 @@
-var lines =[];
+var lines = [];
 
 var readline = require("readline");
 var rl = readline.createInterface({
-  input:  process.stdin,
+  input: process.stdin,
   output: process.stdout
 });
 
-rl.on('line',function(x){
+rl.on('line', function (x) {
   lines.push(x);
 });
 
-rl.on('close',function(){
-  var a = [];
-  var n = Number(lines[0].split(" "));
-  var tmp = lines[1].split(" ");
+rl.on('close', function () {
+  var N = Number(lines[0]);
+  var A = lines[1].split(" ").map(value => Number(value));
 
-  for(var i=0;i<n;i++){
-    a[i]=Number(tmp[i]);
-  }
+  A.sort((a, b) => a - b);
+  var min = A[0]; var before_min = -1
+  var i = 0;
 
-  a.sort(function(a,b){return(a-b)});
+  while (before_min !== min) {
+    for (var i = 0; i < N; i++) {
+      before_min = min;
 
-  var result = a[0];
-  var result_before = 0;
-  var hp = 0;
-  var attack = a[0];
+      if (A[i] % min !== 0) { A[i] = A[i] % min }
 
-  while(result !== result_before){
-    result_before = result;
-    for(var i=0;i<n;i++){
-      hp = a[i]%attack
-      if(hp < result && hp !== 0){result = hp;}
+      min = Math.min(min, A[i]);
+
     }
-    if(result < attack){attack = result;}
   }
-  console.log(result);
+
+  console.log(min);
 });

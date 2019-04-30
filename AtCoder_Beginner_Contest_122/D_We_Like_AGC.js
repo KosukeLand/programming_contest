@@ -1,5 +1,6 @@
 var lines = [];
-var dp = Array(101).fill(0);
+var MOD = Math.pow(10, 9) + 7
+
 
 var readline = require("readline");
 var rl = readline.createInterface({
@@ -13,66 +14,42 @@ rl.on("line", function (x) {
 
 rl.on("close", function () {
     var N = Number(lines[0]);
-    var MOD = Math.pow(10, 9) + 7;
-    // A = 0, C = 1, G = 2, T = 3
-    // ????....? N個の?が存在
-    // AGC(021), ACG(012), GAC(201), A?GC(0?21), AG?C(02?1) はNG
 
-    dp = dp.map(function (value, index, array) {
-        array[index] = Array(4).fill(0);
-        array[index].map(function (value, index, array) {
-
-            array[index] = Array(4).fill(0);
-            array[index].map(function (value, index, array) {
-
-                array[index] = Array(4).fill(0);
-                return (array[index]);
-            });
-            return (array[index]);
-        });
-        return (array[index]);
-    });
-
-
+    // AGC, ACG, GAC, A?GC, AG?C はNG
+    // 0: A, 1: C, 2: G, 3: T
+    var dp = Array(N + 1).fill(0).map(value => value = Array(4).fill(0).map(value => value = Array(4).fill(0).map(value => value = Array(4).fill(0))));
+    
+    
     dp[0][3][3][3] = 1;
 
-    // 文字数
-    for (var len = 0; len < N; len++) {
-        // 最後から3文字目
-        for (var x = 0; x < 4; x++) {
-            // 最後から2文字目
-            for (var y = 0; y < 4; y++) {
-                // 最後から1文字目
-                for (var z = 0; z < 4; z++) {
+    for (var i = 0; i < N; i++) {
+        for (var w = 0; w < 4; w++) {
+            for (var x = 0; x < 4; x++) {
+                for (var y = 0; y < 4; y++) {
 
-                    for (var i = 0; i < 4; i++) {
-                        if (y === 0 && z === 2 && i === 1) { continue; }
-                        if (y === 0 && z === 1 && i === 2) { continue; }
-                        if (y === 2 && z === 0 && i === 1) { continue; }
-                        if (x === 0 && z === 2 && i === 1) { continue; }
-                        if (x === 0 && y === 2 && i === 1) { continue; }
+                    for (var z = 0; z < 4; z++) {
+                        if (x === 0 && y === 2 && z === 1) { continue }
+                        if (x === 0 && y === 1 && z === 2) { continue }
+                        if (x === 2 && y === 0 && z === 1) { continue }
+                        if (w === 0 && y === 2 && z === 1) { continue }
+                        if (w === 0 && x === 2 && z === 1) { continue }
 
-                        dp[len + 1][y][z][i] += dp[len][x][y][z];
-                        dp[len + 1][y][z][i] %= MOD;
+                        dp[i + 1][x][y][z] += dp[i][w][x][y];
+                        dp[i + 1][x][y][z] %= MOD;
                     }
                 }
             }
         }
     }
-    var ans = 0;
 
-    // 最後から3文字目
-    for (var x = 0; x < 4; x++) {
-        // 最後から2文字目
-        for (var y = 0; y < 4; y++) {
-            // 最後から1文字目
-            for (var z = 0; z < 4; z++) {
-                ans += dp[N][x][y][z];
-                ans %= MOD;
-                console.log(ans);
-            };
-        };
-    };
-
-    console.log(ans);
+    var result = 0;
+    for (var w = 0; w < 4; w++) {
+        for (var x = 0; x < 4; x++) {
+            for (var y = 0; y < 4; y++) {
+                result += dp[N][w][x][y];
+                result %= MOD
+            }
+        }
+    }
+    console.log(result);
 });

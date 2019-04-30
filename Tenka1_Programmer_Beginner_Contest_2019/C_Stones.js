@@ -14,19 +14,19 @@ rl.on('close', function () {
     var N = Number(lines[0]);
     var S = lines[1].split("");
 
-    var dp = Array(N).fill(0)
-    var sharp = Array(N).fill(0);
+    // ....##### か ######## になる必要がある
+    // S[i]までの部分文字列時点での最小変換数を計算する
 
-    sharp[0] = (S[0] === "#" ? 1 : 0);
-    dp[0] = (S[0] === "." ? 1 : 0);
+    // S[i]よりも左を，全て#に変換するか，全て.に変換する
+    var sharp = []; sharp[0] = (S[0] === "#" ? 1 : 0);
+    var dp = []; dp[0] = (S[0] === "." ? 1 : 0);
 
     for (var i = 1; i < N; i++) {
-        // "#"の数を数えているだけ
         sharp[i] = sharp[i - 1] + (S[i] === "#" ? 1 : 0);
-        
-        // i番目の文字の時点で，dotとsharpを入れ替えの組み合わせの最小を計算
-        dp[i] = Math.min(sharp[i - 1], dp[i - 1] + (S[i] === "." ? 1 : 0));
+        dp[i] = dp[i - 1] + (S[i] === "." ? 1 : 0);
+
+        // sharpとdot少ない方を，変換する
+        dp[i] = Math.min(sharp[i], dp[i]);
     }
-    
-    console.log(Math.min(sharp[N - 1], dp[N - 1]));
+    console.log(dp[N - 1]);
 });

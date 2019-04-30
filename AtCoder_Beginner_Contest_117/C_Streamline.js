@@ -1,34 +1,28 @@
 var readline = require('readline');
-var lines = [];
+var lines = []; var result = 0;
 
 var rl = readline.createInterface({
-    input:process.stdin,
-    output:process.stdout,
+    input: process.stdin,
+    output: process.stdout,
 });
 
-rl.on('line',function(x){
+rl.on('line', function (x) {
     lines.push(x);
 });
 
-rl.on('close',function(){
-    var tmp = lines.shift();
-    var n = Number(tmp.split(" ")[0]);
-    var m = Number(tmp.split(" ")[1]);
-    var result = 0;
+rl.on('close', function () {
+    var N = Number(lines[0].split(" ")[0]);
+    var M = Number(lines[0].split(" ")[1]);
+    var X = lines[1].split(" ").map(value => Number(value));
 
-    var x = Array(m);
-    var w = Array(m);
-    tmp = lines[0].split(" ");
-    for(var i=0;i<m;i++){x[i]=Number(tmp[i]);}
-    x.sort(function(a,b){return(a-b);});
+    X.sort((a, b) => a - b);
+
+    var sum = Array(M).fill(0);
+    for (var i = 1; i < M; i++) { sum[i] = X[i] - X[i - 1]; }
+
+    sum.sort((a, b) => b - a);
+
+    for (var i = N - 1; i < M; i++) { result += sum[i] }
     
-    w[0]=0;
-    for(var i=1;i<m;i++){w[i]=x[i]-x[i-1];}
-    w.sort(function(a,b){return(a-b);});
-        
-    for(var i=0;i<w.length-(n-1);i++){
-        result = result + w[i];
-    }
-
     console.log(result);
 });

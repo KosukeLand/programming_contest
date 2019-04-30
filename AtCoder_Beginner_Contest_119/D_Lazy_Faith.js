@@ -1,75 +1,91 @@
 var lines = [];
-var a,b,q,s,t,x;
+var a, b, q, s, t, x;
 
-var readline=require("readline");
+var readline = require("readline");
 
 var rl = readline.createInterface({
     input: process.stdin,
-    output:process.stdout,
+    output: process.stdout,
 });
 
-rl.on('line',function(x){
+rl.on('line', function (x) {
     lines.push(x);
 });
 
-rl.on('close',function(){
-    var tmp = lines.shift();
-    a = Number(tmp.split(" ")[0]);
-    b = Number(tmp.split(" ")[1]);
-    q = Number(tmp.split(" ")[2]);
+rl.on('close', function () {
+    var A = Number(lines[0].split(" ")[0]);
+    var B = Number(lines[0].split(" ")[1]);
+    var Q = Number(lines[0].split(" ")[2]);
+    var s = []; var t = []; var x = [];
+    for (var i = 1; i < A + 1; i++) { s[i - 1] = Number(lines[i]); }
+    for (var i = A + 1; i < B + A + 1; i++) { t[i - (A + 1)] = Number(lines[i]); }
+    for (var i = B + A + 1; i < B + A + 1 + Q; i++) { x[i - (B + A + 1)] = Number(lines[i]); }
 
-    s = Array(a);
-    t = Array(b);
-    x = Array(q);
+    s.sort((a, b) => a - b)
+    t.sort((a, b) => a - b)
 
-    for(var i=0;i<a;i++){
-        s[i] = lines.shift();
-        s[i] = Number(s[i]);
-    }
-    s.sort(function(a,b){return(a-b);});
-    
-    for(var i=0;i<b;i++){
-        t[i] = lines.shift();
-        t[i] = Number(t[i]);
-    }
-    t.sort(function(a,b){return(a-b);});
+    console.log("---");
 
-    for(var i=0;i<q;i++){
-        x[i] = lines.shift();
-        x[i] = {
-           start_location: Number(x[i]),
-           minimum:Infinity,
+
+    for (var i = 0; i < x.length; i++) {
+
+        // Binary-Search-1
+        // 西と東の神社を検索
+        var left = 0; var right = s.length - 1
+        while (1) {
+
+            var now_s = Math.floor((left + right) / 2);
+            if (s[now_s] <= x[i] && x[i] <= s[now_s + 1]) { break; } // x[i]の両隣に寺院があるケース
+            if (x[i] <= s[left]) { now_s = left; break } // x[i]の西にのみ神社があるケース
+            if (s[right] <= x[i]) { now_s = right; break } // x[i]の東にのみ神社があるケース
+
+            // 現在地よりも神社が西にあれば，，s[now_s]より東の神社を検索
+            if (s[now_s] <= x[i]) { left = now_s; }
+            // 現在地よりも神社が東にあれば，，s[now_s]より西の神社を検索
+            else { right = now_s; }
+
         }
-    }
 
-    dfs(0,[]);
-    for(var i=0;i<q;i++){console.log(x[i].minimum);}
-});
+        // Binary-Search-2
+        // 西と東の寺院を探索
+        var left = 0; var right = t.length - 1
+        while (1) {
+            var now_t = Math.floor((left + right) / 2);
+            if (t[now_t] <= x[i] && x[i] <= t[now_t + 1]) { break; } // x[i]の両隣に寺院があるケース
+            if (x[i] <= t[left]) { now_t = left; break } // x[i]の西にのみ寺院あるケース
+            if (t[right] <= x[i]) { now_t = right; break } // x[i]の東にのみ寺院があるケース
 
-function dfs(n,comb){
-    if(2 === n){calc(comb);return(0);}
-    
-    var finish = a>b?finish=a:finish=b;
-    for(var i=0;i<finish;i++){
-        comb[n]=i;
-        dfs(n+1,comb);
-    }
-}
+            // 現在地よりも神社が西にあれば，，s[now_s]より東の神社を検索
+            if (t[now_t] <= x[i]) { left = now_t; }
+            // 現在地よりも神社が東にあれば，，s[now_s]より西の神社を検索
+            else { right = now_t; }
 
-function calc(comb){
-    if(s[comb[0]] !== undefined && t[comb[1]] !== undefined){
-        for(var i=0;i<q;i++){
-            
-            s_comb = Math.abs(x[i].start_location - s[comb[0]]);
-            t_comb = Math.abs(x[i].start_location - t[comb[1]]);
-
-            if((s[comb[0]] < x[i].start_location && x[i].start_location < t[comb[1]]) || t[comb[1]] < x[i] && x[i] < s[comb[0]]){
-                if(s_comb < t_comb){result = s_comb*2 + t_comb;}
-                else{result = s_comb + t_comb*2;}
-            }
-            else{s_comb > t_comb ? result = s_comb : result = t_comb;}
-            
-            if(result < x[i].minimum){x[i].minimum = result;}
         }
+
+        // x -> 西の神社 -> 西の寺院
+        var a = Math.min((x[i] - s[now_s]) + (s[now_s] - t[now_t]), x[i] - s[now_s]);
+
+        // x -> 西の神社 -> 東の寺院       
+        var b = (x[i] - s[now_s]) + (t[now_t + 1] - s[now_s]);
+
+        // x -> 西の寺院 -> 西の神社
+        var c = Math.min((x[i] - t[now_t]) + (t[now_t] - s[now_s]), x[i] - t[now_t]);
+
+        // x -> 西の寺院 -> 東の神社
+        var d = (x[i] - t[now_t]) + (s[now_s + 1] - t[now_t]);
+
+        // x -> 東の神社 -> 東の寺院
+        var e = Math.min((s[now_s + 1] - x[i]) + (t[now_t + 1] - s[now_s + 1]), s[now_s + 1] - x[i]);
+
+        // x -> 東の神社 -> 西の寺院
+        var f = (s[now_s + 1] - x[i]) + (s[now_s + 1] - t[now_t]);
+
+        // x -> 東の寺院 -> 東の神社
+        var g = Math.min((t[now_t + 1] - x[i]) + (s[now_s + 1] - t[now_t + 1]), t[now_t + 1] - x[i]);
+
+        // x -> 東の寺院 -> 西の神社
+        var h = (t[now_t + 1] - x[i]) + (t[now_t + 1] - s[now_s]);
+        console.log(a, b, c, d, e, f, g);
+        console.log(Math.min(a, b, c, d, e, f, g));
     }
-}
+})

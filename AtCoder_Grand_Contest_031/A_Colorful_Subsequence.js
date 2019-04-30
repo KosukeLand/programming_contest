@@ -1,4 +1,7 @@
 var lines = [];
+var MOD = Math.pow(10, 9) + 7
+var result = 1;
+
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -11,26 +14,23 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var MOD = Math.pow(10, 9) + 7;
-
-    var N = lines[0];
+    var N = Number(lines[0]);
     var S = lines[1].split("");
 
-    var alphabet = {};
+    S.sort((a, b) => a.charCodeAt(0) - b.charCodeAt(0));
 
-    var result = 1;
+    var counter = []; var cnt = 1;
+    for (var i = 1; i < N; i++) {
+        if (S[i - 1] !== S[i]) { counter.push(cnt); cnt = 0; }
+        cnt++;
+    }
 
-    // baa   = 2C1 * 3C1 - 1 = 5
-    // baaa  = 2C1 * 4C1 - 1 = 7
-    // bcaaa = 2C1 * 2C1 * 4C1 -1 = 15
-    // aabbc = 3C1 * 3C1 * 2C1 -1 = 17
+    counter.push(cnt);
 
+    for (var i = 0; i < counter.length; i++) {
+        result *= counter[i] + 1;
+        result %= MOD;
+    }
 
-    for (var i = 0; i < N; i++) { alphabet[S[i]] === undefined ? alphabet[S[i]] = 1 : alphabet[S[i]]++ }
-    Object.keys(alphabet).forEach(function (key) {
-        result *= alphabet[key] + 1;
-        result %= MOD;  
-    });
     console.log(result - 1);
-
 });

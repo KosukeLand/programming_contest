@@ -1,4 +1,4 @@
-var lines = [];
+var lines = []; var result = 0;
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -11,27 +11,27 @@ rl.on('line', function (x) {
 })
 
 rl.on('close', function () {
+    var N = Number(lines[0].split(" ")[0]);
+    var Q = Number(lines[0].split(" ")[1]);
 
-    var tmp = lines.shift().split(" ");
-    var N = Number(tmp[0]); var Q = Number(tmp[1]);
+    var S = lines[1].split("")
 
-    var S = lines.shift();
+    lines.shift();
+    lines.shift();
 
-    var l = Array(Q); var r = Array(Q);
-    for (var i = 0; i < Q; i++) {
-        tmp = lines[i].split(" ");
-        l[i] = Number(tmp[0]);
-        r[i] = Number(tmp[1]);
-    }
+    var lr = lines.map(value => value.split(" ").map(value => Number(value)));
 
-    var sum = Array(N + 1).fill(0);
-    
+    var sum = Array(N).fill(0);
+
+    // 累積和
     for (var i = 1; i < N; i++) {
-        sum[i + 1] = sum[i];
-        if (S[i - 1] === "A" && S[i] === "C") { sum[i + 1]++; }
+        if (S[i - 1] === "A" && S[i] === "C") { sum[i]++; }
+        sum[i] += sum[i - 1]
+    }
+            
+    for (var i = 0; i < Q; i++) {
+        var l = lr[i][0]; var r = lr[i][1];
+        console.log(sum[r - 1] - sum[l - 1]);
     }
 
-    for (var i = 0; i < Q; i++) {
-        console.log(sum[r[i]] - sum[l[i]]);
-    }
 });

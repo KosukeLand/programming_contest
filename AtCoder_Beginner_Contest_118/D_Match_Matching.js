@@ -1,6 +1,5 @@
 var lines = [];
-var N, M;
-var a, dp;
+var match = [0, 2, 5, 5, 4, 5, 6, 3, 7, 6];
 
 var readline = require('readline');
 
@@ -14,46 +13,38 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var number = [0, 2, 5, 5, 4, 5, 6, 3, 7, 6];
 
-    N = Number(lines[0].split(" ")[0]);
-    M = Number(lines[0].split(" ")[1]);
-    var cont = "";
+    var N = Number(lines[0].split(" ")[0]);
+    var M = Number(lines[0].split(" ")[1]);
 
-    a = Array(M + 1);
-    a[0] = { number: 0, match: 0 };
+    var A = lines[1].split(" ").map(value => Number(value));
 
-    dp = Array(N + 1); dp.fill("");
+    // 文字数
+    // dpに入るモノは最大の文字列
+    var dp = Array(N + 1).fill("");
 
-    var tmp = lines[1].split(" ");
-    for (var i = 1; i <= M; i++) {
-        a[i] = {
-            number: Number(tmp[i - 1]),
-            match: Number(number[tmp[i - 1]]),
-        }
-        if (dp[a[i].match] == "" || dp[a[i].match] < a[i].number.toString()){
-            dp[a[i].match] = a[i].number.toString();
-        }
+    // dp配列初期化
+    for (var i = 0; i < M; i++) {
+        // 本数match[A[i]]使える時，A[i]は作れる
+        if (dp[match[A[i]]] === "" || dp[match[A[i]]] < A[i].toString()) { dp[match[A[i]]] = A[i].toString(); }
     }
 
-    // w : Weigt
-    // n : Match Number
-    for (var w = 1; w <= N; w++) {
-        for (var n = 1; n <= M; n++) {
-            match = w - a[n].match;
+    for (var i = 1; i <= N; i++) {
+        for (var j = 0; j < M; j++) {
 
-            if (match < 0) { continue; }
-            if (dp[match] === "") { continue; }
+            // 数字を作るためにマッチをi本よりも多く使うなら，その数字は作れない
+            if (i - match[A[j]] < 0) { continue; }
+            // マッチi本で文字列を作成できない場合は，continue(なぜなら，i本ぴったり利用する必要があるので)
+            if (dp[i - match[A[j]]] === "") { continue; }
 
             else {
-                cont = dp[match] + a[n].number;
-                if (dp[w].length < cont.length || (dp[w].length === cont.length && dp[w] < cont)) {
-                    dp[w] = cont;
-                }
+                // A[j]を追加したxを作成
+                var x = dp[i - match[A[j]]] + A[j];
+                // 現在最大値のdp[i]とxを比較して，xの方が大きければdp[i]=xとする
+                if (dp[i].length < x.length || (dp[i].length === x.length && dp[i] < x)) { dp[i] = x; }
             }
         }
     }
 
     console.log(dp[N]);
-
 });

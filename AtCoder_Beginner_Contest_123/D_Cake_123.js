@@ -11,55 +11,42 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var tmp = lines.shift().split(" ");
+    var X = Number(lines[0].split(" ")[0]);
+    var Y = Number(lines[0].split(" ")[1]);
+    var Z = Number(lines[0].split(" ")[2]);
+    var K = Number(lines[0].split(" ")[3]);
 
-    var X = Number(tmp[0]);
-    var Y = Number(tmp[1]);
-    var Z = Number(tmp[2]);
-    var K = Number(tmp[3]);
+    var A = lines[1].split(" ").map(value => Number(value));
+    var B = lines[2].split(" ").map(value => Number(value));
+    var C = lines[3].split(" ").map(value => Number(value));
 
-    tmp = lines.shift().split(" ");
-    var A = Array(tmp.length)
-    for (var i = 0; i < A.length; i++) {
-        A[i] = Number(tmp[i]);
-    }
+    A.sort((a, b) => b - a);
+    B.sort((a, b) => b - a);
+    C.sort((a, b) => b - a);
 
-    tmp = lines.shift().split(" ");
-    var B = Array(tmp.length)
-    for (var i = 0; i < B.length; i++) {
-        B[i] = Number(tmp[i]);
-    }
+    var cake_AB = [];
 
-    tmp = lines.shift().split(" ");
-    var C = Array(tmp.length)
-    for (var i = 0; i < C.length; i++) {
-        C[i] = Number(tmp[i]);
-    }
-
-    var result = [];
-
-    A.sort(function (a, b) { return (b - a); });
-    B.sort(function (a, b) { return (b - a); });
-    C.sort(function (a, b) { return (b - a); });
-
-    for (var a = 0; a < A.length; a++) {
-        for (var b = 0; b < B.length; b++) {
-            // 組み合わせパターン K以下のみ調査すればよい
-            if ((a + 1) * (b + 1) > K) { break; }
-
-            for (var c = 0; c < C.length; c++) {
-
-                // 組み合わせパターン K以下のみ調査すればよい 
-                if ((a + 1) * (b + 1) * (c + 1) > K) { break; }
-
-                result.push(A[a] + B[b] + C[c]);
-            }
+    for (var i = 0; i < X; i++) {
+        for (var j = 0; j < Y; j++) {
+            cake_AB.push(A[i] + B[j]);
         }
     }
-    // 結果を降順にソート
-    result.sort(function (a, b) { return (b - a); });
 
-    for (var i = 0; i < Math.min(3000, K); i++) {
-        console.log(result[i]);
+    cake_AB.sort((a, b) => b - a);
+
+    var cake_ABC = []
+
+    for (var i = 0; i < Math.min(K, cake_AB.length); i++) {
+        for (var j = 0; j < Z; j++) {
+            if (Math.min(K, cake_AB.length) < i * j) { continue; }
+            cake_ABC.push(cake_AB[i] + C[j])
+        }
     }
+
+    cake_ABC.sort((a, b) => b - a);
+
+    for (var i = 0; i < K; i++) {
+        console.log(cake_ABC[i]);
+    }
+
 });
