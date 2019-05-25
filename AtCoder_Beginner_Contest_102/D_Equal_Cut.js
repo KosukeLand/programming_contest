@@ -11,9 +11,5 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var N = Number(lines[0]);
-    var A = lines[1].split(" ").map(value => Number(value));
 
-    console.log(N,A);
-    
 });

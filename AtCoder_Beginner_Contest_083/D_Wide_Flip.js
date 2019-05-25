@@ -1,5 +1,4 @@
 var lines = [];
-var result = 0;
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -12,19 +11,29 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var S = lines[0].split("");
-    var len = S.length;
+    var S = lines[0].split(""); var S_rev = [];
+    var ans_1 = Infinity, ans_2 = Infinity;
 
-    // 0000 0000 , 000 0 000
-    center = Math.floor(len / 2) - 1;
-    result = center;
-    var left = center; var right = center + (len % 2 === 0 ? 1 : 2);
-    
-    while (1) {
-        left++; right--;
-        if (S[left] !== S[center] || S[right] !== S[center]) { break; }
-        else { result++; }
+    for (var i = 0; i < S.length; i++) { S_rev[i] = (S[i] === "0" ? "1" : "0") }
+
+    var result = 0;
+    for (var i = 0; i < S.length; i++) {
+        if (S[i] === "1") {
+            result = Math.max(i + 1, S.length - i);
+
+            if (i + 1 < S.length && S[i + 1] === "0") { ans_1 = Math.min(ans_1, result); }
+            else if (i + 1 === S.length) { ans_1 = Math.min(ans_1, result); }
+        }
     }
 
-    console.log(result + 1);
+    for (var i = 0; i < S_rev.length; i++) {
+        if (S_rev[i] === "1") {
+            result = Math.max(i + 1, S_rev.length - i);
+
+            if (i + 1 < S_rev.length && S_rev[i + 1] === "0") { ans_2 = Math.min(ans_2, result); }
+            else if (i + 1 === S_rev.length) { ans_2 = Math.min(ans_2, result); }
+        }
+    }
+
+    console.log(Math.max(ans_1, ans_2) - 1);
 });

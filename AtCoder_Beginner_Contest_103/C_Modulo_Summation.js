@@ -12,15 +12,11 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var N = Number(lines[0]);
-    lines.shift();
+    var a = lines[1].split(" ").map(value => Number(value));
 
-    var a = Array(N); var result = 0;
-    var tmp_1 = lines[0].split(" ")
-    
-    for (var i = 0; i < N; i++) {
-        result += Number(tmp_1[i]) - 1;
+    var ans = 0;
+    for (var value of a) {
+        ans += value - 1
     }
-
-    console.log(result);
+    console.log(ans)
 });

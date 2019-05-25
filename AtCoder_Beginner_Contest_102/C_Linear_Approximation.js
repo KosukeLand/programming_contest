@@ -11,22 +11,18 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var result = 0;
+    var N = Number(lines[0]);
+    var A = lines[1].split(" ").map((value, index) => {
+        return (Number(value - (index + 1)));
+    });
 
-    var N = lines.shift();
-    var spans = lines[0].split(" ").map(value => Number(value));
+    var a = A.concat(); a.sort((a, b) => a - b)
+    var b = a[Math.floor(N / 2)]
+    var ans = 0;
 
-    var i = 1; var cnt = [];
-    for (var span of spans) {
-
-        cnt[i - 1] = span - i;
-        i++;
-    }
-    cnt.sort((a, b) => a - b);
-
-    for (var array of cnt) {
-        result += Math.abs(array - cnt[Math.floor(Number(N) / 2)]);
+    for (var i = 0; i < N; i++) {
+        ans += Math.abs(A[i] - b)
     }
 
-    console.log(result);
+    console.log(ans);
 });

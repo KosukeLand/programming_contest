@@ -14,5 +14,6 @@ rl.on('line', function (x) {
 rl.on('close', function () {
     var N = Number(lines[0]);
 
-    N % 2 === 0 ? console.log(N) : console.log(N * 2);
+    if (N % 2 === 0) { console.log(N) }
+    else { console.log(N * 2) }
 });

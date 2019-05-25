@@ -17,23 +17,22 @@ rl.on('close', function () {
 
     var A = lines[1].split(" ").map(value => Number(value));
 
-    A.sort((a, b) => a - b);
+    var cnt = {}
+    for (var i = 0; i < N; i++) { cnt[A[i]] === undefined ? cnt[A[i]] = 1 : cnt[A[i]]++; }
 
-    var counter = []
-    var j = 0; counter[j] = [A[0], 1];
+    var array = [];
+    Object.keys(cnt).forEach(value => {
+        array.push([value, cnt[value]]);
+    });
 
-    for (var i = 1; i < N; i++) {
-        if (A[i] !== A[i - 1]) { j++; counter[j] = [A[i], 1]; }
-        else { var cnt = counter[j][1] + 1; counter[j] = [A[i], cnt] }
+    array.sort((a, b) => a[1] - b[1])
+    var ans = 0;
+
+    while (K < array.length) {
+        var t = array.shift();
+        ans += t[1];
     }
 
-    counter.sort((a, b) => a[1] - b[1]);
+    console.log(ans)
 
-    var i = 0;
-    while (K < counter.length) {
-        result += counter[i][1];
-        counter.shift();
-    }
-    
-    console.log(result);
 });

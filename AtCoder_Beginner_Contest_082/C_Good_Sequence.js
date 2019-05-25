@@ -1,5 +1,4 @@
 var lines = [];
-var result = 0;
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -15,27 +14,23 @@ rl.on('close', function () {
     var N = Number(lines[0]);
     var a = lines[1].split(" ").map(value => Number(value));
 
-    a.sort((a, b) => a - b);
-
-    var counter = Array(N).fill(0);
-    var j = 0;
-
-    counter[0] = [a[0], 1];
-
-    for (var i = 1; i < N; i++) {
-        if (a[i] !== a[i - 1]) { j++; counter[j] = [a[i], 1] }
-        else { var cnt = counter[j][1] + 1; counter[j] = [a[i], cnt]; }
+    var counter = {};
+    for (var value of a) {
+        if (counter[value] === undefined) { counter[value] = 0; }
+        counter[value]++;
     }
 
-    for (var i = 0; i < counter.length; i++) {
+    var ans = 0;
+    Object.keys(counter).forEach(i => {
+        var index = Number(i);
+        
+        // 当該数字　=== index or 当該数字 === 0
+        if (index !== counter[index]) {
 
-        if (counter[i][0] === counter[i][1]) { continue; }
-        else {
-            if (counter[i] === 0) { continue; }
-            else {
-                result += (counter[i][1] < counter[i][0] ? counter[i][1]: counter[i][1] - counter[i][0]);
-            }
+            if (index < counter[index]) { ans += counter[index] - index }
+            else { ans += counter[index] }
         }
-    }
-    console.log(result);
+    });
+
+    console.log(ans)
 });

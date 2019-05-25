@@ -13,20 +13,27 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
+    var N = Number(lines[0].split(" ")[0])
+    var M = Number(lines[0].split(" ")[1])
 
-    lines.shift()
-    var spans = lines.map(value => value.split(' ').map(value => Number(value)));
+    lines.shift();
 
-    spans.sort((a, b) => a[1] - b[1]);
+    var ab = lines.map(value => value.split(" ").map(value => Number(value)));
 
-    var broken = 0; var result = 0;
+    // ex
+    //       <----->
+    //          <----->
+    //    <-------------->
+    // <-------------------->
+    //                   <----->    
+    // 1  2  3  4  5  6  7  8  9
 
-    for (var span of spans) {
-        var start = span[0]; var end = span[1];
-        if (broken <= start) {
-            result++;
-            broken = end;
-        }
+    ab.sort((a, b) => a[1] - b[1])
+    var broken = 0, ans = 0;
+
+    for (var value of ab) {
+        var start = value[0], end = value[1];
+        if (broken <= start) { broken = end; ans++; }
     }
-    console.log(result);
+    console.log(ans)
 });

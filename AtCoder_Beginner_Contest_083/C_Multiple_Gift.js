@@ -15,9 +15,7 @@ rl.on('close', function () {
     var X = Number(lines[0].split(" ")[0]);
     var Y = Number(lines[0].split(" ")[1]);
 
-    while (X <= Y) {
-        X *= 2; result++;
-    }
+    while (X <= Y) { X *= 2; result++; }
 
     console.log(result);
 });

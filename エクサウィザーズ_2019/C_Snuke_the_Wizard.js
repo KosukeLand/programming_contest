@@ -1,6 +1,7 @@
 var lines = [];
+
 var readline = require('readline');
-var N; var Q; var T; var D; var S = [];
+var NQ; var S; var td
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -11,79 +12,69 @@ rl.on('line', function (x) {
 })
 
 rl.on('close', function () {
-    var tmp = lines.shift().split(" ");
-    N = Number(tmp[0]); Q = Number(tmp[1]);
-    T = Array(Q); D = Array(Q);
+    NQ = lines[0].split(" ").map(i => Number(i));
+    S = lines[1];
 
-    var golem = {};
-    S = lines.shift().split("");
-    for (var i = 0; i < N; i++) {
-        golem[i] = {
-            now: i,
-            alphabet: S[i],
-        }
-    }
+    lines.shift(); lines.shift();
+
+    td = lines.map(i => i.split(" "));
+
+    // ゴーレムが落ちる時は，ゴーレムの座標が-1 or S.length+1のとき
+    var x = Math.floor(binary_search(-1, S.length, "L"));
+    var y = Math.ceil(binary_search(-1, S.length, "R"));
     
-    for (var i = 0; i < Q; i++) {
-        tmp = lines[i].split(" ");
-        T[i] = tmp[0]; D[i] = tmp[1];
-    }
-    
-    // 左から飛び出すゴーレムは左から何番目？
-    a = Math.ceil(binary_search(golem, -1, N, "L"));
-    
-    // javascriptは配列は参照渡しなので，再度初期化する必要あり．
-    for (var i = 0; i < N; i++) {
-        golem[i] = {
-            now: i,
-            alphabet: S[i],
-        }
-    }
-
-    // 右から飛び出すゴーレムは左から何番目？
-    b = Math.ceil(binary_search(golem, -1, N, "R"));
-
-    // リターンされた値が 0より小さい or N-1より大きいの場合，落ちるゴーレムは0
-    console.log(b - a < 0 ? 0 : b - a);
-
-
+    console.log(NQ[0] - (x + 1) - (NQ[0] - y));
 });
 
-function binary_search(g, left, right, M) {
-    var ave = (left + right) / 2;
-    var result = ave;
+// direct : 右から落ちる or 左から落ちる
+function binary_search(left, right, direct) {
 
-    if (left + 1 < right) {
-        ave = Math.floor(ave);
+    var center = (left + right) / 2;
+
+    while (left + 1 < right) {
+
+        var N = NQ[0], Q = NQ[1]
+        var flag = false;
+
+        center = Math.floor(center);
+
+
         for (var i = 0; i < Q; i++) {
-            
-            if (T[i] === g[ave].alphabet) {
-                if (D[i] === "R") { g[ave].now++; g[ave].alphabet = S[g[ave].now]; }
-                else { g[ave].now--; g[ave].alphabet = S[g[ave].now]; }
+            var t = td[i][0], d = td[i][1];
+
+            // 一致したらcenter座標のゴーレムを動かす
+            if (S[center] === t) { d === "L" ? center-- : center++; }
+
+            // 左から落ちる
+            if (center === -1) {
+                left = Math.floor((left + right) / 2);
+                center = (left + right) / 2;
+                flag = true; break;
             }
 
-            // 左から飛び出したら
-            if (g[ave].now < 0) {
-                result = binary_search(g, ave, right, M);
-                break;
+            // 右から落ちる
+            if (N === center) {
+                right = Math.floor((left + right) / 2);
+                center = (left + right) / 2;
+                flag = true; break;
             }
-            // 右からから飛び出したら
-            else if (N - 1 < g[ave].now) {
-                result = binary_search(g, left, ave, M);
-                break;
+        }
+
+        // どちらからも落ちない
+        if (flag === false) {
+            // 左から落ちるゴーレムを探索したい時
+            if (direct === "L") {
+                right = Math.floor((left + right) / 2);
+                center = (left + right) / 2;
             }
-            // 右から飛び出さなかったら
-            else if (i === Q - 1 && M === "R") {
-                result = binary_search(g, ave, right, M);
-            }
-            // 左から飛び出さなかったら
-            else if (i === Q - 1 && M === "L") {
-                result = binary_search(g, left, ave, M);
-            }
+
+            // 右から落ちるゴーレムを探索したい時
             else {
-
+                left = Math.floor((left + right) / 2);
+                center = (left + right) / 2;
             }
         }
     }
-    return (result);
+    
+    return (center)
 }

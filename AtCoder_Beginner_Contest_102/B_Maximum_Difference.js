@@ -14,10 +14,12 @@ rl.on('close', function () {
     var N = Number(lines[0]);
     var A = lines[1].split(" ").map(value => Number(value));
 
+    var ans = 0;
     for (var i = 0; i < N; i++) {
-        for (var j = 0; j < N; j++) {
-            result = Math.max(result,Math.abs(A[i] - A[j]));
+        for (var j = i; j < N; j++) {
+            var result = Math.abs(A[i] - A[j]);
+            ans = Math.max(ans, result);
         }
     }
-    console.log(result);
+    console.log(ans);
 });

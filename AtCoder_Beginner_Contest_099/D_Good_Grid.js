@@ -33,8 +33,10 @@ rl.on("close", function () {
 
     for (var i = 0; i < N; i++) {
         for (var j = 0; j < N; i++) {
-            if ((i + j % 3) )
-                dp[i] = dp[i - 1]
+            if ((i + j % 3) === 0) {
+
+            }
+            dp[i] = dp[i - 1]
         }
     }
 

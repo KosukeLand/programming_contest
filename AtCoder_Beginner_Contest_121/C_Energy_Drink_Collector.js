@@ -12,35 +12,23 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
+  var N = Number(lines[0].split(" ")[0]);
+  var M = Number(lines[0].split(" ")[1]);
 
-  var tmp = lines.shift().split(" ");
+  lines.shift();
 
-  var N = Number(tmp[0]);
-  var M = Number(tmp[1]);
+  var AB = lines.map(i => i.split(" ").map(i => Number(i)));
+  AB.sort((a, b) => a[0] - b[0]);
 
-  var drink = Array(N + 1);
 
+  var ans = 0;
   for (var i = 0; i < N; i++) {
-    tmp = lines[i].split(" ");
-    drink[i + 1] = {
-      yen: Number(tmp[0]),
-      hon: Number(tmp[1]),
-    }
-  }
+    var A = AB[i][0]; var B = AB[i][1];
 
-  drink.sort(function (a, b) { return (a.yen - b.yen) });
-
-  var result = 0;
-  var can = M;
-  for (var i = 0; i < N; i++) {
-    if (can - drink[i].hon === 0) { result = result + can * drink[i].yen; break; }
-    else if (can - drink[i].hon < 0) { result = result + can * drink[i].yen; break;}
+    if (B < M) { ans += A * B; M -= B }
     else {
-      result = result + drink[i].hon * drink[i].yen;
-      can = can - drink[i].hon;
-      
+      ans += A * M; break;
     }
   }
-  
-  console.log(result)
+  console.log(ans);
 });
