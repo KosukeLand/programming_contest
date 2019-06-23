@@ -15,25 +15,14 @@ rl.on('close', function () {
     var N = Number(lines[0].split(" ")[0]);
     var K = Number(lines[0].split(" ")[1]);
 
-    // a + b = K * m
-    // b + c = K * n
-    // c + a = K * l
-
-    // 2b = K(m + n - l)
-    // よって,2a, 2b, 2cはKの倍数である必要がある
-
     var ans = 0;
-    for (var i = 1; i <= K; i++) {
-        if (i * 2 % K === 0) {
+    var num = Array(1000000).fill(0)
 
-            //   i + K * m <= N
-            // ⇔ m <= (N - i) / K
-            if (1 <= Math.floor((N - i) / K)) { ans += Math.pow(Math.floor(((N - i) / K)) + 1, 3); }
-            else { ans++; }
-
-        }
+    for (var i = 1; i <= N; i++) { num[i % K]++ }
+    for (var a = 0; a < K; a++) {
+        var b = (K - a) % K
+        var c = (K - a) % K
+        if ((b + c) % K === 0) { ans += num[a] * num[b] * num[c]; }
     }
-
-    console.log(ans);
-
-});
+    console.log(ans)
+}); 

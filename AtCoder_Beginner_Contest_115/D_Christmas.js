@@ -19,20 +19,33 @@ rl.on('close', function () {
 
     var result = 0;
 
-    var S = dfs(N).split("");
+    // バーガーの厚さの数列
+    // an+1 = 2an + 3
+    // (an+1 + 3) = 2(an +3)
+    // 2(an + 3) = 2^n(a1 + 3)
+    // an =  2^(n+2) - 3
 
-    for (var i = S.length - X; i < S.length; i++) {
-        if (S[i] === '1') { result++; }
-    }
+    // パティの量
+    // bn+1 = 2bn + 1
+    // bn+1 + 1 = 2(bn + 1)
+    // 2(bn + 1) = 2^n(b1 + 1)
+    // bn = 2^(n+1) - 1
 
-    console.log(result);
+    console.log(dfs(N, X));
 });
 
-function dfs(n) {
-    if (n === 0) { var barger = '1'; }
-    else {
-        var b = dfs(n - 1);
-        var barger = '0' + b + '1' + b + '0';
-    }
-    return (barger);
+// 第nバーガー， 第x層までルンルンが食べる
+function dfs(n, x) {
+    var len = Math.pow(2, n + 1) - 3; // バーガーの厚さ
+    var num = Math.pow(2, n) - 1; // パティの厚さ
+
+    if (n === 0) { return (1); } // 0段バーガーのパティは1枚
+
+    if (x === 1) { return (0); } // ルンルンが1層しか食べない場合，それはパン
+    else if (x <= len + 1) { return (dfs(n - 1, x - 1)) } // ルンルンが食べるハンバーガーが半分以下ならば
+    else if (x == len + 2) { return (num + 1) }// ルンルンが食べるハンバーガーがちょうど半分
+    else if (x <= (len + 1) * 2) { return (num + 1 + dfs(n - 1, x - len - 2)); }　// ルンルンが食べるハンバーガーが半分以上全部未満
+    else { return (num * 2 + 1) }// ルンルンがハンバーガーを全部食べる
+    
+    // dfsの引数にx-1を渡すのは，最下層がパンであるため
 }

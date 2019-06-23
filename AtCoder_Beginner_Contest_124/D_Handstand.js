@@ -1,5 +1,4 @@
 var lines = [];
-var result = 0;
 
 var readline = require('readline');
 var rl = readline.createInterface({
@@ -14,37 +13,44 @@ rl.on('line', function (x) {
 rl.on('close', function () {
     var N = Number(lines[0].split(" ")[0]);
     var K = Number(lines[0].split(" ")[1]);
-    var S = lines[1].split("").map(value => Number(value));
+    var S = lines[1].split("");
 
-    var v = [0]; var sum = [];
-    var now = 1;
+    // 配列圧縮(0-1-0-1-...-0)して，それぞれの数を計算
+    var arr = []; var now = "0";
 
-    if (S[0] === now) { j = 0; v[j] = 1; }
-    else { now = 0; j = 1; v[j] = 1; }
+    if (S[0] !== now) { arr.push(0); }
 
-    // 1-0-1-0-...-1って感じの配列がほしい
-    for (var i = 1; i < N; i++) {
-        if (S[i] === now) {
-            v[j]++;
-        }
+    for (var i = 0; i < N; i++) {
+        if (S[i] === now) { var t = arr.pop(); t === undefined ? t = 1 : t++; arr.push(t); }
         else {
-            now = 1 - now;
-            j++; v[j] = 1;
+            now = (1 - Number(now)).toString();
+            arr.push(1);
         }
     }
-    if (v.length % 2 === 0) { v.push(0) }
+    if (now === "1") { arr.push(0) }
 
-    console.log(v);
+    console.log(arr)
 
-    // 1-0-1...の1から始まるので，偶数番目のみチェック
-    for (var i = 0; i < v.length; i = i + 2) {
-        var left = i; var cnt = 0;
-        var right = Math.min(i + 2 * K, v.length - 1);
-
-        for (var j = left; j <= right; j++) {
-            cnt += v[j];
-        }
-        result = Math.max(cnt, result);
+    var sum = []; sum.push(arr[0]);
+    for (var i = 1; i < arr.length; i++) {
+        var t = sum[sum.length - 1]; t += arr[i]; sum.push(t);
     }
-    console.log(result);
-});
+    if (sum[0] !== 0) { sum.unshift(0) }
+    console.log(sum)
+
+    var ans = 0;
+
+    if (sum.length - 2 * K < 0) { console.log(sum[sum.length - 1]) }
+    else {
+        for (var i = 0; i + 2 * K < sum.length; i++) {
+            // 0から始まる
+            if (i % 2 === 0) { var t = sum[i + 2 * K - 1] - sum[i] + 1 }
+            // 1から始まる
+            else { var t = sum[i + 2 * K] - sum[i] + 1 }
+
+            ans = Math.max(ans, t);
+            console.log(t)
+        }
+        console.log(ans);
+    }
+}); 

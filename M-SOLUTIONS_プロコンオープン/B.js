@@ -11,13 +11,11 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var N = Number(lines[0]);
-    var ans = 0;
+    var S = lines[0].split("");
 
-    // N = k * m + k = k(m + 1)
-    for (var k = 1; k < Math.sqrt(N); k++) {
-        if (N / k === Math.floor(N / k) && k !== N / k - 1) { ans += N / k - 1 }
-    }
+    var cnt_t = 0; var cnt_f = 0;
+    for (var i = 0; i < S.length; i++) { S[i] === "o" ? cnt_t++ : cnt_f++; }
 
-    console.log(ans);
+    if (8 - cnt_t > 15 - S.length) { console.log("NO") }
+    else { console.log("YES"); }
 });

@@ -1,4 +1,6 @@
 var lines = [];
+var ans; var G;
+
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -11,33 +13,34 @@ rl.on('line', function (x) {
 });
 
 rl.on('close', function () {
-    var N = Number(lines[0]);
+    var N = Number(lines[0]); ans = Array(N).fill(0);
     lines.shift();
 
-    var uvw = lines.map(i => i.split(" ").map(i => Number(i)))
-    var cost = Array(N).fill(Infinity).map(i => i = Array(N).fill(Infinity))
-
+    G = Array(N).fill(0).map(i => i = [])
     for (var i = 0; i < N - 1; i++) {
-        var u = uvw[i][0]; var v = uvw[i][1]; var w = uvw[i][2]
-        cost[i][i] = 0
-        cost[u - 1][v - 1] = w; cost[v - 1][u - 1] = w;
+        var t = lines[i].split(" ");
+        var u = Number(t[0]); var v = Number(t[1]); var w = Number(t[2]);
+        G[u - 1].push([v - 1, w]); G[v - 1].push([u - 1, w])
     }
-    cost[N - 1][N - 1] = 0;
-
-
-    var ans = Array(N).fill("");
-
-    ans[0] = "0";
-    var j = 0;
-    for (var i = 0; i < N; i++) {
-        var c = cost[i]
-        for (; j < N; j++) {
-            if (i !== j && c[j] % 2 === 0) { ans[j] = ans[i]; i = j; break }
-            if (i !== j && c[j] % 2 === 1) { ans[j] = (ans[i] === "0" ? "1" : "0"); i = j; break }
-        }
-    }
-
-    console.log(cost)
-    console.log(ans)
+    bfs(0, -1, 1)
+    for (var i = 0; i < N; i++) { console.log(ans[i]); }
 });
 
+// vをcで塗る pはvの親
+function bfs(v, p, c) {
+    var q = [[v, p, c]]
+
+    while (q.length) {
+        var t = q.shift(); var v = t[0]; var p = t[1]; var c = t[2];
+        ans[v] = c;
+
+        for (var value of G[v]) {
+            // 親は探索済み
+            if (value[0] === p) { continue; }
+            // 辺の距離が奇数なら
+            if (value[1] & 1) { q.push([value[0], v, 1 - c]) }
+            // 辺の距離が偶数なら
+            else { q.push([value[0], v, c]) }
+        }
+    }
+}

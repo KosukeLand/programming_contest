@@ -17,16 +17,20 @@ rl.on('close', function () {
     lines.shift();
 
     var XYZ = lines.map(i => i.split(" ").map(i => Number(i)))
-    var counter = {};
+    var check = Array(N).fill(-1); var ans = 0;
 
-    for (var i = 0; i < M; i++) {
-        var x = XYZ[i][0]; var y = XYZ[i][1]
-        if (counter[x] === undefined) { counter[x] = 1 }
-        else { counter[x]++ }
+    XYZ.sort((a, b) => a[0] - b[0])
+
+    while (XYZ.length) {
+        var t = XYZ.shift();
+        var x = t[0]; var y = t[1]; var z = t[2];
+
+        if (check[x - 1] !== -1) { check[y - 1] = 1 }
+        else if (check[y - 1] !== -1) { check[x - 1] = 1 }
+        else { ans++; check[x - 1] = 1; check[y - 1] = 1; XYZ.push(t)}
     }
-    var ans = 1;
-    Object.keys(counter).forEach(value => {
-        if (counter[value] >= 2) { ans++; }
-    })
+
+
+    for (var i = 0; i < N; i++) { if (check[i] === -1) { ans++; } }
     console.log(ans);
 });
