@@ -1,50 +1,43 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math"
-	"sort"
+	"os"
+	"strconv"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var N, x int
+var ans int
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	fmt.Scan(&N, &x)
+	a := make([]int, N)
+	reader := bufio.NewScanner(os.Stdin)
+	reader.Split(bufio.ScanWords)
 
 	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
+		reader.Scan()
+		a[i], _ = strconv.Atoi(reader.Text())
 	}
 
-	sort.Ints(A)
+	for i := 0; i < N-1; i++ {
+		if x < a[i]+a[i+1] {
+			cnt := (a[i] + a[i+1]) - x
+			ans += cnt
+			a[i+1] = max(a[i+1]-cnt, 0)
 
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
 		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
 	}
 	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
+
+func lcm(x, y uint64) uint64 {
+	return (x / gcd(x, y)) * y
+}
 
 func gcd(x, y uint64) uint64 {
 	if x%y == 0 {

@@ -25,17 +25,33 @@ func main() {
 	for i := 0; i < N+1; i++ {
 		dp[i] = make([]int, M+1)
 	}
-	for i := 1; i < N+1; i++ {
-		for j := 1; j < M+1; j++ {
-			if S[i-1] == T[j-1] {
-				dp[i][j] += dp[i-1][j] + dp[i][j-1]
-			} else {
-				dp[i][j] += dp[i-1][j] + dp[i][j-1] - dp[i-1][j-1]
+
+	dp[0][0] = 1
+	for i := 0; i < N+1; i++ {
+		for j := 0; j < M+1; j++ {
+			if 0 < i && 0 < j && S[i-1] == T[j-1] {
+				dp[i][j] += dp[i-1][j-1]
+				dp[i][j] %= mod
 			}
-			dp[i][j] %= mod
+			if 0 < i {
+				dp[i][j] += dp[i-1][j]
+				dp[i][j] %= mod
+			}
+			if 0 < j {
+				dp[i][j] += dp[i][j-1]
+				dp[i][j] %= mod
+			}
+			if 0 < i && 0 < j {
+				dp[i][j] -= dp[i-1][j-1]
+				dp[i][j] %= mod
+
+				if dp[i][j] < 0 {
+					dp[i][j] += mod
+				}
+			}
 		}
 	}
-	fmt.Println(dp[N][M] + 1)
+	fmt.Println(dp[N][M])
 }
 
 /*  ----------------------------------------  */

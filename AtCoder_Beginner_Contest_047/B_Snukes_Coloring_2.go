@@ -3,45 +3,31 @@ package main
 import (
 	"fmt"
 	"math"
-	"sort"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var W, H, N int
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	fmt.Scan(&W, &H, &N)
+	var x_left, x_right int = 0, W
+	var y_up, y_down int = H, 0
 
 	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
+		var a, b, c int
+		fmt.Scan(&a, &b, &c)
+
+		if c == 1 {
+			x_left = max(x_left, a)
+		} else if c == 2 {
+			x_right = min(x_right, a)
+		} else if c == 3 {
+			y_down = max(y_down, b)
 		} else {
-			A[i] = t
+			y_up = min(y_up, b)
 		}
-		m[t]++
 	}
 
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
-		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
-	}
-	fmt.Println(ans)
+	fmt.Println(max(x_right-x_left, 0) * max((y_up-y_down), 0))
 }
 
 /*  ----------------------------------------  */

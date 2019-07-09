@@ -3,45 +3,19 @@ package main
 import (
 	"fmt"
 	"math"
-	"sort"
 )
 
-var N int
+var c string
 var ans, res int = 1, 1
 var mod int = pow(10, 9) + 7
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
-
-	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
+	fmt.Scan(&c)
+	if c == "a" || c == "i" || c == "u" || c == "e" || c == "o" {
+		fmt.Println("vowel")
+	} else {
+		fmt.Println("consonant")
 	}
-
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
-		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
-	}
-	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */

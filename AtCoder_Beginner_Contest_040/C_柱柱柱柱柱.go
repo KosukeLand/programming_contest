@@ -3,50 +3,49 @@ package main
 import (
 	"fmt"
 	"math"
-	"sort"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+type cost struct {
+	n, cost int
+}
+
+var N, ans int
+var memo map[int]int
+var x []int
 
 func main() {
 	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	x = make([]int, N)
+	memo = make(map[int]int)
 
 	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
+		fmt.Scan(&x[i])
+	}
+	memo[0] = 0
+	fmt.Println(dfs(N - 1))
+}
+func dfs(n int) int {
+
+	if memo[n] != 0 {
+		return memo[n]
+
+	} else {
+		if 0 <= n-2 {
+			memo[n] = min(dfs(n-1)+abs(x[n-1]-x[n]), dfs(n-2)+abs(x[n-2]-x[n]))
+		} else if 0 <= n-1 {
+			memo[n] = min(dfs(n-1)+abs(x[n-1]-x[n]), 9999999999)
 		}
-		m[t]++
+		return memo[n]
 	}
-
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
-		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
-	}
-	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
 
-func gcd(x, y uint64) uint64 {
+func lcm(x, y int) int {
+	return (x / gcd(x, y)) * y
+}
+
+func gcd(x, y int) int {
 	if x%y == 0 {
 		return y
 	} else {
@@ -85,16 +84,10 @@ func min(x ...int) int {
 func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
 func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
+func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type XY struct {
-	x int
-	y int
-}
+type SortBy []int
 
-type SortBy [][]int
-
-func (a SortBy) Len() int      { return len(a) }
-func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool {
-	return a[i][1] < a[j][1]
-}
+func (a SortBy) Len() int           { return len(a) }
+func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }

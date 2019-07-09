@@ -39,30 +39,31 @@ func main() {
 		}
 	}
 
-	var used [9]bool
+	var used [10]bool
 
 	// 調査対象はN!
 	// 1,2,3,4...
 	// 2,1,3,4...
-
-	fmt.Println(r)
-	fmt.Println(dfs(0, 1, 0, r, used))
-
+	for i := 1; i <= R; i++ {
+		ans = max(ans, dfs(1, r[i], 0, r, used))
+	}
+	fmt.Println(ans)
 }
 
-func dfs(n int, now int, sum int, r []int, used [9]bool) int {
+func dfs(n int, now int, sum int, r []int, used [10]bool) int {
 	if n == R {
 		return sum
 	} else {
 		var ans int = 99999999
 		for i := 1; i <= R; i++ {
-			if used[i] || cost[ab{now, i}] == 0 {
+			next := r[i]
+
+			if used[next] || cost[ab{now, next}] == 0 {
 				continue
 			} else {
-				used[i] = true
-				fmt.Println(r)
-				ans = min(ans, dfs(n+1, i, sum+cost[ab{r[now], r[i]}], r, used))
-				used[i] = false
+				used[next] = true
+				ans = min(ans, dfs(n+1, next, sum+cost[ab{now, next}], r, used))
+				used[next] = false
 			}
 		}
 		return ans

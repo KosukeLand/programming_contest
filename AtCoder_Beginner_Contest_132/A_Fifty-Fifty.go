@@ -3,50 +3,43 @@ package main
 import (
 	"fmt"
 	"math"
-	"sort"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var mod = pow(10, 9) + 7
+var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
+var ans int = 0
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	m := make(map[string]int)
+	var str string
+	fmt.Scan(&str)
 
-	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
+	for i := 0; i < len(str); i++ {
+		m[string(str[i])]++
 	}
 
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
+	var cnt int
+	for _, value := range m {
+		if value != 2 {
+			fmt.Println("No")
 			return
 		}
-		j++
+		cnt++
 	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
+	if cnt == 2 {
+		fmt.Println("Yes")
+	} else {
+		fmt.Println("No")
 	}
-	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
 
-func gcd(x, y uint64) uint64 {
+func lcm(x, y int) int {
+	return (x / gcd(x, y)) * y
+}
+
+func gcd(x, y int) int {
 	if x%y == 0 {
 		return y
 	} else {
@@ -60,9 +53,10 @@ func combination(x, y int) int {
 }
 
 func permutation(x, y int) int {
-	var ans int = 1
-	for i := x - y; 0 < i; i-- {
-		ans *= i
+	var ans, cnt int = 1, 0
+	for cnt < y {
+		ans *= (x - cnt)
+		cnt++
 	}
 	return ans
 }
@@ -85,16 +79,10 @@ func min(x ...int) int {
 func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
 func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
+func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type XY struct {
-	x int
-	y int
-}
+type SortBy []int
 
-type SortBy [][]int
-
-func (a SortBy) Len() int      { return len(a) }
-func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool {
-	return a[i][1] < a[j][1]
-}
+func (a SortBy) Len() int           { return len(a) }
+func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }

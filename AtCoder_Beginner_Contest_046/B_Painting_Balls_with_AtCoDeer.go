@@ -3,43 +3,17 @@ package main
 import (
 	"fmt"
 	"math"
-	"sort"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var N, K int
+var ans int = 1
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	fmt.Scan(&N, &K)
 
-	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
-	}
-
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
-		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
+	ans *= K
+	for i := 1; i < N; i++ {
+		ans *= (K - 1)
 	}
 	fmt.Println(ans)
 }

@@ -1,52 +1,52 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math"
-	"sort"
+	"os"
+	"strconv"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var N, K, W, H, Q int
+var ans int = 9999999999
 
 func main() {
-	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	fmt.Scan(&N, &Q)
+	reader := bufio.NewScanner(os.Stdin)
+	reader.Split(bufio.ScanWords)
+	l, r := make([]int, Q), make([]int, Q)
+
+	for i := 0; i < Q; i++ {
+		reader.Scan()
+		l[i], _ = strconv.Atoi(reader.Text())
+		reader.Scan()
+		r[i], _ = strconv.Atoi(reader.Text())
+	}
+
+	// imos method
+	m := make([]int, N+1)
+	for i := 0; i < Q; i++ {
+		m[l[i]-1]++
+		m[r[i]]--
+	}
+	for i := 1; i < N; i++ {
+		m[i] += m[i-1]
+	}
 
 	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
+		fmt.Printf("%d", abs(m[i])%2)
 	}
-
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
-		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
-	}
-	fmt.Println(ans)
+	fmt.Printf("\n")
 }
 
 /*  ----------------------------------------  */
 
-func gcd(x, y uint64) uint64 {
+func lcm(x, y int) int {
+	return (x / gcd(x, y)) * y
+}
+
+func gcd(x, y int) int {
 	if x%y == 0 {
 		return y
 	} else {
@@ -85,16 +85,10 @@ func min(x ...int) int {
 func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
 func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
+func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type XY struct {
-	x int
-	y int
-}
+type SortBy []int
 
-type SortBy [][]int
-
-func (a SortBy) Len() int      { return len(a) }
-func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool {
-	return a[i][1] < a[j][1]
-}
+func (a SortBy) Len() int           { return len(a) }
+func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }

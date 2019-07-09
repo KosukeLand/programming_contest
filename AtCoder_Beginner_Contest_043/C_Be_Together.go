@@ -6,47 +6,35 @@ import (
 	"sort"
 )
 
-var N int
-var ans, res int = 1, 1
-var mod int = pow(10, 9) + 7
+var N, K int
+var ans int = 9999999999
 
 func main() {
 	fmt.Scan(&N)
-	m := make(map[int]int)
-	A := make([]int, N)
+	a := make([]int, N)
 
 	for i := 0; i < N; i++ {
-		var t int
-		fmt.Scan(&t)
-		if m[t] == 0 {
-			A[i] = (-1) * t
-		} else {
-			A[i] = t
-		}
-		m[t]++
+		fmt.Scan(&a[i])
 	}
+	sort.Ints(a)
 
-	sort.Ints(A)
-
-	var j int
-	for i := (-1) * (N - 1); i <= (N - 1); i = i + 2 {
-		if A[j] != i {
-			fmt.Println(0)
-			return
+	for i := a[0]; i <= a[N-1]; i++ {
+		var res int
+		for j := 0; j < N; j++ {
+			res += pow(i-a[j], 2)
 		}
-		j++
-	}
-
-	for i := 1; i <= N/2; i++ {
-		ans *= 2
-		ans %= mod
+		ans = min(ans, res)
 	}
 	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
 
-func gcd(x, y uint64) uint64 {
+func lcm(x, y int) int {
+	return (x / gcd(x, y)) * y
+}
+
+func gcd(x, y int) int {
 	if x%y == 0 {
 		return y
 	} else {
@@ -85,16 +73,10 @@ func min(x ...int) int {
 func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
 func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
+func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type XY struct {
-	x int
-	y int
-}
+type SortBy []int
 
-type SortBy [][]int
-
-func (a SortBy) Len() int      { return len(a) }
-func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool {
-	return a[i][1] < a[j][1]
-}
+func (a SortBy) Len() int           { return len(a) }
+func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
