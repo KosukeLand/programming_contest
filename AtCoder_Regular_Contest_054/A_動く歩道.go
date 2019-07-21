@@ -11,45 +11,36 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int = 1e9
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
-
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
+	var L, X, Y, S, D float64
+	fmt.Scan(&L, &X, &Y, &S, &D)
+	if Y <= X {
+		// 歩道の向きと反対周りに歩く意味がない(歩道と同じ向きに歩く)
+		if S <= D {
+			fmt.Println((D - S) / (X + Y))
 		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+			fmt.Println((L - (S - D)) / (X + Y))
 		}
+	} else {
+		// 歩道と同じ向きに歩く
+		var a, b, c, d float64 = 1e9, 1e9, 1e9, 1e9
+		if S <= D {
+			a = (D - S) / (X + Y)
+		} else {
+			b = (L - (S - D)) / (X + Y)
+		}
+		// 歩道と反対向きに歩く
+		if S <= D {
+			c = (L - (D - S)) / (Y - X)
+		} else {
+			d = (S - D) / (Y - X)
+		}
+		ans := math.Min(a, b)
+		ans = math.Min(ans, c)
+		ans = math.Min(ans, d)
+		fmt.Println(ans)
 	}
 }
 

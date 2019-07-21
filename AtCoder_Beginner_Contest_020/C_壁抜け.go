@@ -2,47 +2,101 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"math"
 	"os"
 	"strconv"
+	"strings"
 )
 
-var mod int = pow(10, 9) + 7
-
 const pi = math.Pi
+
+var mod int = pow(10, 9) + 7
+var Umod uint64 = 1000000007
+var ans int = 1e9
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	H, _ := strconv.Atoi(read())
 	W, _ := strconv.Atoi(read())
 	T, _ := strconv.Atoi(read())
-	s := make([][]string, H)
+	v := make([]string, 0, H*W)
 
-	var start_x, start_y int
-	var goal_x, goal_y int
+	var start, goal int
 	for i := 0; i < H; i++ {
-		s[i] = make([]string, W)
+		t := strings.Split(read(), "")
+		v = append(v, t...)
+
 		for j := 0; j < W; j++ {
-			s[i][j] = read()
-			if s[i][j] == "S" {
-				start_x = j
-				start_y = i
+			if string(t[j]) == "S" {
+				start = i*W + j
 			}
-			if s[i][j] == "G" {
-				goal_x = j
-				goal_y = i
+			if string(t[j]) == "G" {
+				goal = i*W + j
 			}
 		}
 	}
-	for t := 30; 0 <= t; t-- {
-		for k := 0; k < N; k++ {
-			for i := 0; i < N; i++ {
-				for i := 0; i < N; k++ {
 
+	left, right := 0, T
+	for left+1 < right {
+		x := (left + right) / 2
+
+		// ダイクストラ
+		used := make([]bool, H*W)
+		d := make([]int, H*W)
+		for i, _ := range d {
+			d[i] = 1e10
+		}
+		d[start] = 0
+
+		cost := make([][]int, H*W)
+		for i := 0; i < H*W; i++ {
+			cost[i] = make([]int, H*W)
+		}
+
+		for i := 0; i < H*W; i++ {
+			for j := i + 1; j < H*W; j++ {
+				if ((i+1)%W != 0 && i+1 == j) || i+W == j {
+					if v[j] == "#" {
+						cost[i][j] = x
+					} else {
+						cost[i][j] = 1
+					}
+
+					if v[i] == "#" {
+						cost[j][i] = x
+					} else {
+						cost[j][i] = 1
+					}
+				} else {
+					cost[i][j] = 1e10
+					cost[j][i] = 1e10
 				}
 			}
 		}
+
+		for {
+			u := -1
+			for i := 0; i < H*W; i++ {
+				if !used[i] && (u == -1 || d[i] < d[u]) {
+					u = i
+				}
+			}
+			if u == -1 {
+				break
+			}
+			used[u] = true
+			for i := 0; i < H*W; i++ {
+				d[i] = min(d[i], d[u]+cost[u][i])
+			}
+		}
+		if d[goal] <= T {
+			left = x
+		} else {
+			right = x
+		}
 	}
+	fmt.Println(left)
 }
 
 /*  ----------------------------------------  */
@@ -135,11 +189,13 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy []struct {
+	b, c int
+}
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
+func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
 
 type PriorityQueue []int
 

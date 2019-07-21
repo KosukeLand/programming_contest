@@ -8,21 +8,22 @@ import (
 	"strconv"
 )
 
-var mod = pow(10, 9) + 7
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
-var ans, cnt int
+const pi = math.Pi
 
-var dist = [301]int{}
+var mod int = pow(10, 9) + 7
+var Umod uint64 = 1000000007
+var ans int = 1e9
 
 func main() {
 	reader.Split(bufio.ScanWords)
-	N, _ = strconv.Atoi(read())
-	M, _ = strconv.Atoi(read())
+	N, _ := strconv.Atoi(read())
+	M, _ := strconv.Atoi(read())
 	cost := make([][]int, N)
-	for i, _ := range cost {
+	for i := 0; i < N; i++ {
 		cost[i] = make([]int, N)
-		for j, _ := range cost[i] {
-			cost[i][j] = 1e8
+
+		for j := 0; j < N; j++ {
+			cost[i][j] = 1e9
 		}
 	}
 	for i := 0; i < M; i++ {
@@ -32,31 +33,50 @@ func main() {
 		cost[u-1][v-1] = l
 		cost[v-1][u-1] = l
 	}
-	fmt.Println(cost)
-	for i, _ := range cost[0] {
-		for j, _ := range dist {
-			dist[j] = 1e8
-		}
-		dist[i] = 0
-		cost[i][0] = 1e8
-		q := make([]int, N)
-		q = append(q, i)
-		for len(q) != 0 {
-			t := q[0]
-			q = q[1:]
-			for k, _ := range cost[t] {
-				if k < 1e8 {
-					continue
-				}
-				dist[k] = min(dist[k], dist[t]+cost[t][k])
-				q = append(q, k)
+
+	for key, value := range cost[0] {
+		if 1e9 <= value {
+			continue
+		} else {
+			t := cost[key][0]
+			cost[key][0] = 1e9
+
+			// ダイクストラ
+			used := make([]bool, N)
+			d := make([]int, N)
+			for i := 0; i < N; i++ {
+				d[i] = 1e9
 			}
+			d[key] = 0
+
+			for {
+				u := -1
+				for i := 0; i < N; i++ {
+					if !used[i] && (u == -1 || d[i] < d[u]) {
+						u = i
+					}
+				}
+				if u == -1 {
+					break
+				}
+				used[u] = true
+				for i := 0; i < N; i++ {
+					d[i] = min(d[i], d[u]+cost[u][i])
+				}
+			}
+			ans = min(ans, d[0]+t)
+			cost[key][0] = t
 		}
 	}
-	fmt.Println(dist)
+	if ans < 1e9 {
+		fmt.Println(ans)
+	} else {
+		fmt.Println(-1)
+	}
 }
 
 /*  ----------------------------------------  */
+
 var reader = bufio.NewScanner(os.Stdin)
 
 func read() string {
@@ -77,18 +97,52 @@ func gcd(x, y int) int {
 	}
 }
 
+var fac [1000000]int
+var finv [1000000]int
+var inv [1000000]int
+
+func combination_init() {
+	fac[0], fac[1] = 1, 1
+	finv[0], finv[1] = 1, 1
+	inv[1] = 1
+
+	// invは a^(-1) mod p
+	// pをaで割ることを考える
+
+	// p/a*(a) + p%a = p
+	// p/a*(a) + p%a = 0          (mod p)
+	// -p%a = p/a*(a)             (mod p)
+	// -p%a *a^(-1)= p/a          (mod p)
+	// a^(-1)= p/a * (-p%a)^(-1)  (mod p)
+	// a^(-1) =
+
+	for i := 2; i < 1000000; i++ {
+		fac[i] = fac[i-1] * i % mod
+		inv[i] = mod - inv[mod%i]*(mod/i)%mod
+		finv[i] = finv[i-1] * inv[i] % mod
+	}
+}
+
 func combination(x, y int) int {
-	fmt.Println(x, y, permutation(x, y), permutation(y, y))
-	return permutation(x, y) / permutation(y, y)
+	if x < y {
+		return 0
+	}
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[y] * finv[x-y] % mod) % mod
+	//return fac[x] / (fac[y] * fac[x-y])
 }
 
 func permutation(x, y int) int {
-	var ans, cnt int = 1, 0
-	for cnt < y {
-		ans *= (x - cnt)
-		cnt++
+	if x < y {
+		return 0
 	}
-	return ans
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[x-y] % mod) % mod
+	//return fac[x] / fac[x-y]
 }
 
 func max(x ...int) int {
@@ -111,8 +165,24 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy []struct {
+	b, c int
+}
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
+func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
+
+type PriorityQueue []int
+
+func (h PriorityQueue) Len() int            { return len(h) }
+func (h PriorityQueue) Less(i, j int) bool  { return h[i] < h[j] }
+func (h PriorityQueue) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *PriorityQueue) Push(x interface{}) { *h = append(*h, x.(int)) }
+func (h *PriorityQueue) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}

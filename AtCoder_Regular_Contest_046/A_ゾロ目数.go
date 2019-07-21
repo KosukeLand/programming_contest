@@ -5,52 +5,27 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans, cnt int = 0, 0
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	reader.Split(bufio.ScanWords)
+	N, _ := strconv.Atoi(read())
+	N--
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
-		}
+	x := N/9 + 1
+	y := N%9 + 1
+
+	for i := 0; i < x; i++ {
+		fmt.Printf("%d", y)
 	}
+	fmt.Printf("\n")
 }
 
 /*  ----------------------------------------  */

@@ -5,51 +5,52 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	reader.Split(bufio.ScanWords)
+	_, _ = strconv.Atoi(read())
+	M, _ := strconv.Atoi(read())
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
+	py := make(SortBy, M)
+	for i := 0; i < M; i++ {
+		py[i] = make([]int, 3)
+
+		py[i][0] = i
+		py[i][1], _ = strconv.Atoi(read())
+		py[i][2], _ = strconv.Atoi(read())
+	}
+
+	sort.Sort(py)
+
+	var j int = 1
+	py[0][2] = 1
+	for i := 1; i < M; i++ {
+		if py[i-1][1] == py[i][1] {
+			j++
+			py[i][2] = j
 		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+			j = 1
+			py[i][2] = j
 		}
+	}
+	ans := make([][]int, M)
+	for i := 0; i < M; i++ {
+		ans[i] = make([]int, 2)
+	}
+	for i := 0; i < M; i++ {
+		ans[py[i][0]][0] = py[i][1]
+		ans[py[i][0]][1] = py[i][2]
+	}
+	for i := 0; i < M; i++ {
+		fmt.Printf("%06d%06d\n", ans[i][0], ans[i][1])
 	}
 }
 
@@ -143,13 +144,16 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []struct {
-	b, c int
-}
+type SortBy [][]int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	if a[i][1] == a[j][1] {
+		return a[i][2] < a[j][2]
+	}
+	return a[i][1] < a[j][1]
+}
 
 type PriorityQueue []int
 

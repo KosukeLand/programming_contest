@@ -9,47 +9,21 @@ import (
 
 const pi = math.Pi
 
-var mod int = pow(10, 9) + 7
+var mod int = 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int = 1e9
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	var A, K, t, n float64
+	fmt.Scan(&A, &K)
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
+	if K == 0 {
+		fmt.Println(int64(2000000000000 - A))
 	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+		for ; t < 2000000000000; n++ {
+			t = math.Pow(K+1, n)*(A+1/K) - 1/K
 		}
+		fmt.Println(n - 1)
 	}
 }
 
@@ -138,10 +112,10 @@ func min(x ...int) int {
 	}
 	return res
 }
-func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
-func abs(x int) int    { return int(math.Abs(float64(x))) }
-func floor(x int) int  { return int(math.Floor(float64(x))) }
-func ceil(x int) int   { return int(math.Ceil(float64(x))) }
+func pow(x, y int64) int64 { return int64(math.Pow(float64(x), float64(y))) }
+func abs(x int) int        { return int(math.Abs(float64(x))) }
+func floor(x int) int      { return int(math.Floor(float64(x))) }
+func ceil(x int) int       { return int(math.Ceil(float64(x))) }
 
 type SortBy []struct {
 	b, c int

@@ -1,32 +1,65 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math"
+	"os"
+	"strconv"
 )
 
-var N int
+const pi = math.Pi
+
+var mod int = pow(10, 9) + 7
+var Umod uint64 = 1000000007
+var ans, cnt int
 
 func main() {
-	fmt.Scan(&N)
-	A := make([][]float64, N)
+	reader.Split(bufio.ScanWords)
+	N, _ := strconv.Atoi(read())
+	T := make([]uint64, N)
+	A := make([]uint64, N)
 
 	for i := 0; i < N; i++ {
-		A[i] = make([]float64, 2)
-		for j := 0; j < 2; j++ {
-			fmt.Scan(&A[i][j])
-
-		}
+		x, _ := strconv.Atoi(read())
+		y, _ := strconv.Atoi(read())
+		T[i], A[i] = uint64(x), uint64(y)
 	}
 
-	var x float64 = 1
+	var _t, _a uint64 = T[0], A[0]
 	for i := 1; i < N; i++ {
-		x = math.Max(math.Ceil((x*A[i-1][0]+A[i][0]-1)/A[i][0]), math.Ceil((x*A[i-1][1]+A[i][1]-1)/A[i][1]))
+		var t, a, x uint64 = 1, 1, 1
+
+		if T[i] < _t || A[i] < _a {
+			t = _t / T[i]
+			a = _a / A[i]
+			if _t%T[i] != 0 {
+				t++
+			}
+			if _a%A[i] != 0 {
+				a++
+			}
+			if t < a {
+				x = a
+			} else {
+				x = t
+			}
+		}
+		_t, _a = T[i]*x, A[i]*x
 	}
-	fmt.Println(A[N-1][0]*x + A[N-1][1]*x)
+
+	fmt.Println(_t + _a)
+
 }
 
 /*  ----------------------------------------  */
+
+var reader = bufio.NewScanner(os.Stdin)
+
+func read() string {
+	reader.Scan()
+	return reader.Text()
+}
 
 func lcm(x, y int) int {
 	return (x / gcd(x, y)) * y
@@ -41,16 +74,52 @@ func gcd(x, y int) int {
 	}
 }
 
+var fac [1000000]int
+var finv [1000000]int
+var inv [1000000]int
+
+func combination_init() {
+	fac[0], fac[1] = 1, 1
+	finv[0], finv[1] = 1, 1
+	inv[1] = 1
+
+	// invは a^(-1) mod p
+	// pをaで割ることを考える
+
+	// p/a*(a) + p%a = p
+	// p/a*(a) + p%a = 0          (mod p)
+	// -p%a = p/a*(a)             (mod p)
+	// -p%a *a^(-1)= p/a          (mod p)
+	// a^(-1)= p/a * (-p%a)^(-1)  (mod p)
+	// a^(-1) =
+
+	for i := 2; i < 1000000; i++ {
+		fac[i] = fac[i-1] * i % mod
+		inv[i] = mod - inv[mod%i]*(mod/i)%mod
+		finv[i] = finv[i-1] * inv[i] % mod
+	}
+}
+
 func combination(x, y int) int {
-	return permutation(x, y) / permutation(y, y)
+	if x < y {
+		return 0
+	}
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[y] * finv[x-y] % mod) % mod
+	//return fac[x] / (fac[y] * fac[x-y])
 }
 
 func permutation(x, y int) int {
-	var ans int = 1
-	for i := x - y; 0 < i; i-- {
-		ans *= i
+	if x < y {
+		return 0
 	}
-	return ans
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[x-y] % mod) % mod
+	//return fac[x] / fac[x-y]
 }
 
 func max(x ...int) int {
@@ -73,15 +142,24 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type XY struct {
-	x int
-	y int
+type SortBy []struct {
+	b, c int
 }
 
-type SortBy [][]int
+func (a SortBy) Len() int           { return len(a) }
+func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
 
-func (a SortBy) Len() int      { return len(a) }
-func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool {
-	return a[i][1] < a[j][1]
+type PriorityQueue []int
+
+func (h PriorityQueue) Len() int            { return len(h) }
+func (h PriorityQueue) Less(i, j int) bool  { return h[i] < h[j] }
+func (h PriorityQueue) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *PriorityQueue) Push(x interface{}) { *h = append(*h, x.(int)) }
+func (h *PriorityQueue) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
 }

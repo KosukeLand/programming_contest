@@ -5,52 +5,102 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	reader.Split(bufio.ScanWords)
+	A, _ := strconv.Atoi(read())
+	B, _ := strconv.Atoi(read())
+	Q, _ := strconv.Atoi(read())
+	s := make([]int, A)
+	t := make([]int, B)
+	x := make([]int, Q)
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
+	for i := 0; i < A; i++ {
+		s[i], _ = strconv.Atoi(read())
+	}
+	for i := 0; i < B; i++ {
+		t[i], _ = strconv.Atoi(read())
+	}
+	for i := 0; i < Q; i++ {
+		x[i], _ = strconv.Atoi(read())
+	}
+
+	for i := 0; i < Q; i++ {
+		// -------x点からもっとも近い神社 --> その寺からもっとも近い寺院-------
+		a := binary_search_left(s, x[i])
+		b := binary_search_right(s, x[i])
+
+		var c, minimum_st, minimum_ts int
+		if abs(x[i]-s[a]) < abs(x[i]-s[b]) {
+			c, minimum_st = a, abs(x[i]-s[a])
 		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+			c, minimum_st = b, abs(x[i]-s[b])
+		}
+		a = binary_search_left(t, s[c])
+		b = binary_search_right(t, s[c])
+
+		if abs(s[c]-t[a]) < abs(s[c]-t[b]) {
+			minimum_st += abs(s[c] - t[a])
+		} else {
+			minimum_st += abs(s[c] - t[b])
+		}
+
+		// -------x点からもっとも近い寺院 --> その寺からもっとも近い神社-------
+		a = binary_search_left(t, x[i])
+		b = binary_search_right(t, x[i])
+		if abs(x[i]-t[a]) < abs(x[i]-t[b]) {
+			c, minimum_ts = a, abs(x[i]-t[a])
+		} else {
+			c, minimum_ts = b, abs(x[i]-t[b])
+		}
+
+		a = binary_search_left(s, t[c])
+		b = binary_search_right(s, t[c])
+
+		if abs(t[c]-s[a]) < abs(t[c]-s[b]) {
+			minimum_ts += abs(t[c] - s[a])
+		} else {
+			minimum_ts += abs(t[c] - s[b])
+		}
+
+		fmt.Println(min(minimum_st, minimum_ts))
+	}
+}
+
+func binary_search_left(arr []int, target int) int {
+	left, right := 0, len(arr)
+
+	for left+1 < right {
+		c := (left + right) / 2
+		if arr[c] <= target {
+			left = c
+		} else {
+			right = c
 		}
 	}
+	return left
+}
+
+func binary_search_right(arr []int, target int) int {
+	left, right := -1, len(arr)-1
+
+	for left+1 < right {
+		c := (left + right) / 2
+		if target <= arr[c] {
+			right = c
+		} else {
+			left = c
+		}
+	}
+	return right
 }
 
 /*  ----------------------------------------  */

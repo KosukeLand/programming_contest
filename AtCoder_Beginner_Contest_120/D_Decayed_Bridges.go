@@ -12,52 +12,62 @@ var N, M, cnt int
 
 func main() {
 	fmt.Scan(&N, &M)
-	result, tree, ptr := make([]int, M+1), make([]int, N+1), make([]int, N+1)
+	result, tree, ptr := make([]int, M+1), make([]int, N), make([]int, N)
+	ab := make([][]int, M)
+
 	result[M] = (N * (N - 1)) / 2
 
 	ptr, tree = init_ptr(ptr, tree)
 
 	reader := bufio.NewScanner(os.Stdin)
 	reader.Split(bufio.ScanWords)
-	for i := M; 1 <= i; i-- {
-		reader.Scan()
-		a, _ := strconv.Atoi(reader.Text())
-		reader.Scan()
-		b, _ := strconv.Atoi(reader.Text())
 
-		a = a - 1
-		b = b - 1
+	for i := 0; i < M; i++ {
+		ab[i] = make([]int, 2)
 
+		reader.Scan()
+		ab[i][0], _ = strconv.Atoi(reader.Text())
+		reader.Scan()
+		ab[i][1], _ = strconv.Atoi(reader.Text())
+
+		ab[i][0] = ab[i][0] - 1
+		ab[i][1] = ab[i][1] - 1
+	}
+
+	for i := M - 1; 0 <= i; i-- {
+		a, b := ab[i][0], ab[i][1]
+		fmt.Println(tree)
 		if !same(a, b, ptr) {
 			ra, _ := root(a, ptr)
 			rb, _ := root(b, ptr)
 			x := tree[ra] * tree[rb]
+			result[i] = result[i+1] - x
+
 			ptr, tree = unit(a, b, ptr, tree)
-
-			result[i-1] = result[i] - x
 		} else {
-			result[i-1] = result[i]
+			result[i] = result[i+1]
 		}
-	}
 
+	}
 	for i := 1; i <= M; i++ {
 		fmt.Println(result[i])
 	}
 }
 
 func init_ptr(ptr []int, tree []int) ([]int, []int) {
-	for i := 0; i <= N; i++ {
+	for i := 0; i < N; i++ {
 		ptr[i], tree[i] = i, 1
 	}
 	return ptr, tree
 }
 
 func root(x int, ptr []int) (int, []int) {
-	if ptr[x] != x {
+	if ptr[x] == x {
+		return x, ptr
+	} else {
 		ptr[x], ptr = root(ptr[x], ptr)
 		return ptr[x], ptr
 	}
-	return x, ptr
 }
 
 func unit(x int, y int, ptr []int, tree []int) ([]int, []int) {

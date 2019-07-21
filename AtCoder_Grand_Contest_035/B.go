@@ -5,50 +5,41 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	reader.Split(bufio.ScanWords)
+	_, _ = strconv.Atoi(read())
+	M, _ := strconv.Atoi(read())
+	e := make(map[int][]int)
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
+	for i := 0; i < M; i++ {
+		x, _ := strconv.Atoi(read())
+		y, _ := strconv.Atoi(read())
+		e[x] = append(e[x], y)
+		e[y] = append(e[y], x)
+	}
+
+	if M%2 == 1 {
+		fmt.Println(-1)
 	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
+		for key, value := range e {
+			if len(value)%2 == 0 {
+				for _, j := range value {
+					fmt.Println(key, j)
+					for i := 0; i < len(e[j]); i++ {
+						if e[j][i] == key {
+							e[j] = append(e[j][0:i], e[j][i+1:]...)
+						}
+					}
 				}
 			}
-			fmt.Println("Aoki")
 		}
 	}
 }
@@ -143,13 +134,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []struct {
-	b, c int
-}
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
+func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
 
 type PriorityQueue []int
 

@@ -11,46 +11,28 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	var x1, y1, r, x2, y2, x3, y3 float64
+	var red, blue string = "YES", "YES"
+	fmt.Scan(&x1, &y1, &r, &x2, &y2, &x3, &y3)
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
-		}
+	// 円内に四角形がおさまるケース
+	a := math.Sqrt(math.Pow(math.Max(x1, x2)-math.Min(x1, x2), 2) + math.Pow(math.Max(y1, y2)-math.Min(y1, y2), 2))
+	b := math.Sqrt(math.Pow(math.Max(x1, x2)-math.Min(x1, x2), 2) + math.Pow(math.Max(y1, y3)-math.Min(y1, y3), 2))
+	c := math.Sqrt(math.Pow(math.Max(x1, x3)-math.Min(x1, x3), 2) + math.Pow(math.Max(y1, y2)-math.Min(y1, y2), 2))
+	d := math.Sqrt(math.Pow(math.Max(x1, x3)-math.Min(x1, x3), 2) + math.Pow(math.Max(y1, y3)-math.Min(y1, y3), 2))
+
+	if a <= r && b <= r && c <= r && d <= r {
+		blue = "NO"
 	}
+	// 四角形内に円がおさまるケース
+	if x1+r <= x3 && x2 <= x1-r && y1+r <= y3 && y2 <= y1-r {
+		red = "NO"
+	}
+
+	fmt.Println(red)
+	fmt.Println(blue)
 }
 
 /*  ----------------------------------------  */
@@ -143,13 +125,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []struct {
-	b, c int
-}
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
+func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
 
 type PriorityQueue []int
 

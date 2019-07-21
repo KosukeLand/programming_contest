@@ -4,13 +4,32 @@ import (
 	"bufio"
 	"math"
 	"os"
+	"strconv"
 )
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
+const pi = math.Pi
+
 var mod int = pow(10, 9) + 7
-var pi float64 = math.Pi
+var Umod uint64 = 1000000007
+var ans int = 1e9
 
 func main() {
+	reader.Split(bufio.ScanWords)
+	n, _ := strconv.Atoi(read())
+	v := make([]int, n)
+	for i, _ := range v {
+		v[i], _ = strconv.Atoi(read())
+	}
+
+	v_odd := make(map[int]int)
+	v_even := make(map[int]int)
+	for i, value := range v {
+		if i%2 == 0 {
+			v_even[value]++
+		} else {
+			v_odd[value]++
+		}
+	}
 
 }
 
@@ -104,11 +123,13 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy []struct {
+	b, c int
+}
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
+func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
 
 type PriorityQueue []int
 

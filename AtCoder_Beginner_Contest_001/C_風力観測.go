@@ -5,52 +5,124 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	var ans_dis int
+	var ans_deg string
+	reader.Split(bufio.ScanWords)
+	Deg, _ := strconv.Atoi(read())
+	Dis, _ := strconv.Atoi(read())
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
+	dis := float64(Dis) / 60
+	if dis*10 != math.Floor(dis*10) {
+		if dis*10-math.Floor(dis*10) < 0.5 {
+			dis = math.Floor(dis*10) / 10
 		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+			dis = math.Ceil(dis*10) / 10
 		}
 	}
+	if 0 <= dis && dis <= 0.2 {
+		ans_dis = 0
+		ans_deg = "C"
+	} else if 0.3 <= dis && dis <= 1.5 {
+		ans_dis = 1
+	} else if 1.6 <= dis && dis <= 3.3 {
+		ans_dis = 2
+	} else if 3.4 <= dis && dis <= 5.4 {
+		ans_dis = 3
+	} else if 5.5 <= dis && dis <= 7.9 {
+		ans_dis = 4
+	} else if 8.0 <= dis && dis <= 10.7 {
+		ans_dis = 5
+	} else if 10.8 <= dis && dis <= 13.8 {
+		ans_dis = 6
+	} else if 13.9 <= dis && dis <= 17.1 {
+		ans_dis = 7
+	} else if 17.2 <= dis && dis <= 20.7 {
+		ans_dis = 8
+	} else if 20.8 <= dis && dis <= 24.4 {
+		ans_dis = 9
+	} else if 24.5 <= dis && dis <= 28.4 {
+		ans_dis = 10
+	} else if 28.5 <= dis && dis <= 32.6 {
+		ans_dis = 11
+	} else {
+		ans_dis = 12
+	}
+
+	deg := float64(Deg) / 10
+	if ans_deg != "C" {
+		if 11.25 <= deg && deg < 33.75 {
+			ans_deg = "NNE"
+		} else if 33.75 <= deg && deg < 56.25 {
+			ans_deg = "NE"
+		} else if 56.25 <= deg && deg < 78.75 {
+			ans_deg = "ENE"
+		} else if 78.75 <= deg && deg < 101.25 {
+			ans_deg = "E"
+		} else if 101.25 <= deg && deg < 123.75 {
+			ans_deg = "ESE"
+		} else if 123.75 <= deg && deg < 146.25 {
+			ans_deg = "SE"
+		} else if 146.25 <= deg && deg < 168.75 {
+			ans_deg = "SSE"
+		} else if 168.75 <= deg && deg < 191.25 {
+			ans_deg = "S"
+		} else if 191.25 <= deg && deg < 213.75 {
+			ans_deg = "SSW"
+		} else if 213.75 <= deg && deg < 236.25 {
+			ans_deg = "SW"
+		} else if 236.25 <= deg && deg < 258.75 {
+			ans_deg = "WSW"
+		} else if 258.75 <= deg && deg < 281.25 {
+			ans_deg = "W"
+		} else if 281.25 <= deg && deg < 303.75 {
+			ans_deg = "WNW"
+		} else if 303.75 <= deg && deg < 326.25 {
+			ans_deg = "NW"
+		} else if 326.25 <= deg && deg < 348.75 {
+			ans_deg = "NNW"
+		} else {
+			ans_deg = "N"
+		}
+	}
+	fmt.Println(ans_deg, ans_dis)
+}
+
+func binary_search_left(arr []int, target int) int {
+	left, right := 0, len(arr)
+
+	for left+1 < right {
+		c := (left + right) / 2
+		if arr[c] <= target {
+			left = c
+		} else {
+			right = c
+		}
+	}
+	return left
+}
+
+func binary_search_right(arr []int, target int) int {
+	left, right := -1, len(arr)-1
+
+	for left+1 < right {
+		c := (left + right) / 2
+		if target <= arr[c] {
+			right = c
+		} else {
+			left = c
+		}
+	}
+	return right
 }
 
 /*  ----------------------------------------  */

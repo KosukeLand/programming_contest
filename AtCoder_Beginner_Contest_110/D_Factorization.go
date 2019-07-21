@@ -11,46 +11,28 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int = 1
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	var N, M int
+	fmt.Scan(&N, &M)
+	m := make(map[int]int)
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+	for i := 2; i*i <= M; i++ {
+		for M%i == 0 {
+			M /= i
+			m[i]++
 		}
 	}
+	if M != 1 {
+		m[M]++
+	}
+
+	for _, value := range m {
+		ans *= combination(value+(N-1), (N - 1))
+		ans %= mod
+	}
+	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */

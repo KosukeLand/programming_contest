@@ -5,53 +5,34 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"strconv"
 )
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
 var mod int = pow(10, 9) + 7
 var pi float64 = math.Pi
-var ans int
+var ans int64 = 1e16
 
 func main() {
-	reader.Split(bufio.ScanWords)
-	N, _ := strconv.Atoi(read())
-	H, _ := strconv.Atoi(read())
+	var N, H, A, B, C, D, E float64
+	fmt.Scan(&N, &H, &A, &B, &C, &D, &E)
 
-	A, _ := strconv.Atoi(read())
-	B, _ := strconv.Atoi(read())
-	C, _ := strconv.Atoi(read())
-	D, _ := strconv.Atoi(read())
-	E, _ := strconv.Atoi(read())
+	// H + i*B + j*D - (N-i-j)*E > 0
+	// j > ((N-i)*E - H - i*B)/(D+E)
 
-	sum := H
+	var i float64
+	for i = 0; i <= N; i++ {
 
-	var x, y int
-	if float64(B)/float64(A) < float64(D)/float64(C) {
-		x = C
-		y = D
-	} else {
-		x = A
-		y = B
-	}
-
-	var i int
-	for i < N {
-		if sum-E < 0 {
-			fmt.Println((N - i), D)
-			if sum+(N-i-1)*E <= D {
-				sum += D
-				ans += C
-			} else {
-				sum += y
-				ans += x
-			}
+		if H+i*(B+E)-N*E > 0 {
+			yen := i * A
+			ans = int64(math.Min(float64(ans), yen))
 		} else {
-			sum -= E
+			j := math.Floor(((N-i)*E-H-i*B)/(D+E)) + 1
+			if i+j <= N {
+				yen := i*A + j*C
+				ans = int64(math.Min(float64(ans), yen))
+			}
 		}
-		i++
-		fmt.Println(sum, ans)
 	}
+
 	fmt.Println(ans)
 }
 

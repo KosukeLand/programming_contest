@@ -8,24 +8,79 @@ import (
 	"strconv"
 )
 
-var n, ans int
+const pi = math.Pi
+
+var mod int = pow(10, 9) + 7
+var Umod uint64 = 1000000007
+var ans_1, ans_2 int
 
 func main() {
-	fmt.Scan(&n)
-	reader := bufio.NewScanner(os.Stdin)
 	reader.Split(bufio.ScanWords)
-
+	n, _ := strconv.Atoi(read())
 	a := make([]int, n)
 	for i := 0; i < n; i++ {
-		reader.Scan()
-		a[i], _ = strconv.Atoi(reader.Text())
+		a[i], _ = strconv.Atoi(read())
 	}
+
+	sum := make([]int, n)
+	sum[0] = a[0]
+	if sum[0] == 0 {
+		sum[0], ans_1 = -1, 1
+	} else {
+		sum[0], ans_1 = a[0], 0
+	}
+
+	for i := 1; i < n; i++ {
+		sum[i] += a[i] + sum[i-1]
+
+		if 0 < sum[i-1] && 0 <= sum[i] {
+			// NGパターン
+			ans_1 += sum[i] + 1
+			sum[i] = -1
+		} else if sum[i-1] < 0 && sum[i] <= 0 {
+			// NGパターン
+			ans_1 += 1 - sum[i]
+			sum[i] = 1
+		}
+	}
+
+	sum = make([]int, n)
+	if a[0] <= 0 {
+		sum[0], ans_2 = 1, 1-a[0]
+	} else {
+		sum[0], ans_2 = -1, a[0]+1
+	}
+	for i := 1; i < n; i++ {
+		sum[i] += a[i] + sum[i-1]
+
+		if 0 < sum[i-1] && 0 <= sum[i] {
+			// NGパターン
+			ans_2 += sum[i] + 1
+			sum[i] = -1
+		} else if sum[i-1] < 0 && sum[i] <= 0 {
+			// NGパターン
+			ans_2 += 1 - sum[i]
+			sum[i] = 1
+		}
+	}
+	fmt.Println(min(ans_1, ans_2))
 
 }
 
 /*  ----------------------------------------  */
 
-func gcd(x, y uint64) uint64 {
+var reader = bufio.NewScanner(os.Stdin)
+
+func read() string {
+	reader.Scan()
+	return reader.Text()
+}
+
+func lcm(x, y int) int {
+	return (x / gcd(x, y)) * y
+}
+
+func gcd(x, y int) int {
 	if x%y == 0 {
 		return y
 	} else {
@@ -34,16 +89,52 @@ func gcd(x, y uint64) uint64 {
 	}
 }
 
+var fac [1000000]int
+var finv [1000000]int
+var inv [1000000]int
+
+func combination_init() {
+	fac[0], fac[1] = 1, 1
+	finv[0], finv[1] = 1, 1
+	inv[1] = 1
+
+	// invは a^(-1) mod p
+	// pをaで割ることを考える
+
+	// p/a*(a) + p%a = p
+	// p/a*(a) + p%a = 0          (mod p)
+	// -p%a = p/a*(a)             (mod p)
+	// -p%a *a^(-1)= p/a          (mod p)
+	// a^(-1)= p/a * (-p%a)^(-1)  (mod p)
+	// a^(-1) =
+
+	for i := 2; i < 1000000; i++ {
+		fac[i] = fac[i-1] * i % mod
+		inv[i] = mod - inv[mod%i]*(mod/i)%mod
+		finv[i] = finv[i-1] * inv[i] % mod
+	}
+}
+
 func combination(x, y int) int {
-	return permutation(x, y) / permutation(y, y)
+	if x < y {
+		return 0
+	}
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[y] * finv[x-y] % mod) % mod
+	//return fac[x] / (fac[y] * fac[x-y])
 }
 
 func permutation(x, y int) int {
-	var ans int = 1
-	for i := x - y; 0 < i; i-- {
-		ans *= i
+	if x < y {
+		return 0
 	}
-	return ans
+	if fac[0] != 1 {
+		combination_init()
+	}
+	return fac[x] * (finv[x-y] % mod) % mod
+	//return fac[x] / fac[x-y]
 }
 
 func max(x ...int) int {
@@ -61,18 +152,27 @@ func min(x ...int) int {
 	}
 	return res
 }
+func pow(x, y int) int { return int(math.Pow(float64(x), float64(y))) }
+func abs(x int) int    { return int(math.Abs(float64(x))) }
+func floor(x int) int  { return int(math.Floor(float64(x))) }
+func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-func pow(x, y int) uint64 { return uint64(math.Pow(float64(x), float64(y))) }
-func abs(x int) int       { return int(math.Abs(float64(x))) }
-func floor(x int) int     { return int(math.Floor(float64(x))) }
-
-type si struct {
-	s int
-	i int
-}
-
-type SortBy []si
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i].s < a[j].s }
+func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
+
+type PriorityQueue []int
+
+func (h PriorityQueue) Len() int            { return len(h) }
+func (h PriorityQueue) Less(i, j int) bool  { return h[i] < h[j] }
+func (h PriorityQueue) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *PriorityQueue) Push(x interface{}) { *h = append(*h, x.(int)) }
+func (h *PriorityQueue) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}

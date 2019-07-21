@@ -5,51 +5,70 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 )
 
 const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans int
+var per []int
 
 func main() {
-	var N uint64
-	fmt.Scan(&N)
+	reader.Split(bufio.ScanWords)
+	N, _ := strconv.Atoi(read())
+	M, _ := strconv.Atoi(read())
+	p := make([]int, N)
+	per = make([]int, N)
+	init_uf()
 
-	bit_s := fmt.Sprintf("%b", N)
-	//fmt.Println(len(bit_s))
-	//fmt.Println(bit_s)
-	if bit_s == "1" {
-		fmt.Println("Aoki")
-	} else {
-		if len(bit_s)%2 == 0 {
-			// Aokiくんに0がくるよりも先にTakahashiくんに1がくるときTakahashiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "0" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "1" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Takahashi")
-		} else {
-			// Takahashiくんに0がくるよりも先にAokiくんに1がくるときAokiくんの勝ち
-			for i := 1; i < len(bit_s); i++ {
-				if string(bit_s[i]) == "1" && i%2 == 0 {
-					fmt.Println("Aoki")
-					return
-				}
-				if string(bit_s[i]) == "0" && i%2 == 1 {
-					fmt.Println("Takahashi")
-					return
-				}
-			}
-			fmt.Println("Aoki")
+	for i := 0; i < N; i++ {
+		p[i], _ = strconv.Atoi(read())
+		p[i] = p[i] - 1
+	}
+	for i := 0; i < M; i++ {
+		x, _ := strconv.Atoi(read())
+		y, _ := strconv.Atoi(read())
+		unit(x-1, y-1)
+	}
+
+	for i := 0; i < N; i++ {
+		if same(per[i], per[p[i]]) {
+			ans++
 		}
+	}
+	fmt.Println(ans)
+}
+
+func init_uf() {
+	for i, _ := range per {
+		per[i] = i
+	}
+}
+func root(x int) int {
+	if per[x] == x {
+		return x
+	} else {
+		per[x] = root(per[x])
+		return per[x]
+	}
+}
+func unit(x, y int) {
+	x = root(x)
+	y = root(y)
+	if x != y {
+		per[y] = x
+	}
+}
+func same(x, y int) bool {
+	x = root(x)
+	y = root(y)
+
+	if x == y {
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -143,13 +162,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []struct {
-	b, c int
-}
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i].c > a[j].c }
+func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
 
 type PriorityQueue []int
 
