@@ -17,39 +17,22 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	T := make([]uint64, N)
-	A := make([]uint64, N)
-
+	T, A := make([]uint64, N), make([]uint64, N)
 	for i := 0; i < N; i++ {
-		x, _ := strconv.Atoi(read())
-		y, _ := strconv.Atoi(read())
-		T[i], A[i] = uint64(x), uint64(y)
+		fmt.Scan(&T[i], &A[i])
 	}
-
 	var _t, _a uint64 = T[0], A[0]
 	for i := 1; i < N; i++ {
-		var t, a, x uint64 = 1, 1, 1
-
-		if T[i] < _t || A[i] < _a {
-			t = _t / T[i]
-			a = _a / A[i]
-			if _t%T[i] != 0 {
-				t++
-			}
-			if _a%A[i] != 0 {
-				a++
-			}
-			if t < a {
-				x = a
-			} else {
-				x = t
-			}
+		var x uint64 = 1
+		if _t <= T[i] && _a <= A[i] {
+			_t, _a = T[i]*x, A[i]*x
+		} else {
+			t, a := math.Ceil(float64(_t)/float64(T[i])), math.Ceil(float64(_a)/float64(A[i]))
+			x = uint64(math.Max(t, a))
+			_t, _a = T[i]*x, A[i]*x
 		}
-		_t, _a = T[i]*x, A[i]*x
 	}
-
 	fmt.Println(_t + _a)
-
 }
 
 /*  ----------------------------------------  */
@@ -61,11 +44,11 @@ func read() string {
 	return reader.Text()
 }
 
-func lcm(x, y int) int {
+func lcm(x, y uint64) uint64 {
 	return (x / gcd(x, y)) * y
 }
 
-func gcd(x, y int) int {
+func gcd(x, y uint64) uint64 {
 	if x%y == 0 {
 		return y
 	} else {

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
-	"strconv"
 )
 
 const pi = math.Pi
@@ -16,26 +14,16 @@ var Umod uint64 = 1000000007
 var ans, cnt int
 
 func main() {
-	reader.Split(bufio.ScanWords)
-	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
-	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
-	}
-
-	if cnt%2 == 0 {
-		fmt.Println(sum)
+	var S uint64
+	var a, d, b, c uint64
+	fmt.Scan(&S)
+	if S <= 1e9 {
+		fmt.Println(0, 0, S, 0, S, 1)
 	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+		a, b = 1e9, 1
+		c = (a - S%a) % a
+		d = (S + c) / a
+		fmt.Println(0, 0, a, b, c, d)
 	}
 }
 

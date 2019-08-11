@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -18,24 +17,27 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
+	A, _ := strconv.Atoi(read())
+	B, _ := strconv.Atoi(read())
+	S := make([]int, N)
+	var Max, Min, sum int = 0, 1e9, 0
+
 	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
+		S[i], _ = strconv.Atoi(read())
+		Max = max(Max, S[i])
+		Min = min(Min, S[i])
+		sum += S[i]
 	}
 
-	if cnt%2 == 0 {
-		fmt.Println(sum)
+	if Max-Min == 0 {
+		fmt.Println(-1)
 	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+		// P(Max-Min) = B
+		var P float64 = float64(B) / float64((Max - Min))
+
+		// A*N = P*sum+Q*N
+		var Q float64 = (float64(A*N) - P*float64(sum)) / float64(N)
+		fmt.Println(P, Q)
 	}
 }
 

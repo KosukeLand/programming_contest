@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
-	"strconv"
 )
 
 const pi = math.Pi
@@ -16,26 +14,34 @@ var Umod uint64 = 1000000007
 var ans, cnt int
 
 func main() {
-	reader.Split(bufio.ScanWords)
-	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
-	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
-	}
+	var N int
+	fmt.Scan(&N)
 
-	if cnt%2 == 0 {
-		fmt.Println(sum)
+	if N == 1 {
+		fmt.Println("Not Prime")
 	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
+		for i := 2; i*i <= N; i++ {
+			if N%i == 0 {
+				// 合成数
+				if N%2 == 0 || N%5 == 0 {
+					fmt.Println("Not Prime")
+					return
+				}
+				var sum int
+				for N != 0 {
+					dig := N % 10
+					sum += dig
+					N /= 10
+				}
+				if sum%3 != 0 {
+					fmt.Println("Prime")
+				} else {
+					fmt.Println("Not Prime")
+				}
+				return
+			}
 		}
-		fmt.Println(sum + A[0]*2)
+		fmt.Println("Prime")
 	}
 }
 

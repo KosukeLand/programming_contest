@@ -2,10 +2,8 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -18,25 +16,42 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
+	C, _ := strconv.Atoi(read())
+	xv := make([][]int, N)
 	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
+		xv[i] = make([]int, 2)
+		xv[i][0], _ = strconv.Atoi(read())
+		xv[i][1], _ = strconv.Atoi(read())
 	}
 
-	if cnt%2 == 0 {
-		fmt.Println(sum)
-	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+	var now int
+	for i := 0; i < N; i++ {
+
 	}
+}
+
+func binary_tree_left(left, right, target int, arr [][]int) int {
+	for left+1 < right {
+		mid := (left + right) / 2
+		if arr[mid][0] <= target {
+			left = mid
+		} else {
+			right = mid
+		}
+	}
+	return left
+}
+
+func binary_tree_right(left, right, target int, arr [][]int) int {
+	for left+1 < right {
+		mid := (left + right) / 2
+		if arr[mid][0] < target {
+			left = mid
+		} else {
+			right = mid
+		}
+	}
+	return right
 }
 
 /*  ----------------------------------------  */

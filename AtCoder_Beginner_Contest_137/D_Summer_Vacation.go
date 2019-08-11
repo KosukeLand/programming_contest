@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"container/heap"
 	"fmt"
 	"math"
 	"os"
@@ -13,30 +14,37 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var cnt, ans int
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
-	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
-	}
+	M, _ := strconv.Atoi(read())
+	arr := make(SortBy, N)
 
-	if cnt%2 == 0 {
-		fmt.Println(sum)
-	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+	for i := 0; i < N; i++ {
+		a, _ := strconv.Atoi(read())
+		b, _ := strconv.Atoi(read())
+		arr[i] = []int{a, b}
 	}
+	sort.Sort(arr)
+	var j int
+	pq := &PriorityQueue{}
+	heap.Init(pq)
+	for i := M - 1; 0 <= i; i-- {
+		for j < len(arr) {
+			if arr[j][0]+i <= M {
+				heap.Push(pq, arr[j][1])
+				j++
+			} else {
+				break
+			}
+		}
+		if pq.Len() != 0 {
+			ans += heap.Pop(pq).(int)
+		}
+	}
+	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
@@ -129,16 +137,21 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	if a[i][0] == a[j][0] {
+		return a[i][1] > a[j][1]
+	}
+	return a[i][0] < a[j][0]
+}
 
 type PriorityQueue []int
 
 func (h PriorityQueue) Len() int            { return len(h) }
-func (h PriorityQueue) Less(i, j int) bool  { return h[i] < h[j] }
+func (h PriorityQueue) Less(i, j int) bool  { return h[i] > h[j] }
 func (h PriorityQueue) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
 func (h *PriorityQueue) Push(x interface{}) { *h = append(*h, x.(int)) }
 func (h *PriorityQueue) Pop() interface{} {

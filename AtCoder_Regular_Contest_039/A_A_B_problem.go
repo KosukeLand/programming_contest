@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -17,26 +16,26 @@ var ans, cnt int
 
 func main() {
 	reader.Split(bufio.ScanWords)
-	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
-	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
-	}
+	A, _ := strconv.Atoi(read())
+	B, _ := strconv.Atoi(read())
 
-	if cnt%2 == 0 {
-		fmt.Println(sum)
-	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
-	}
+	a_1 := A % 10
+	a_10 := ((A - a_1) % 100) / 10
+	a_100 := (A - a_10 - a_1) / 100
+
+	b_1 := B % 10
+	b_10 := ((B - b_1) % 100) / 10
+	b_100 := (B - b_10 - b_1) / 100
+
+	ans = A - B
+	ans = max(ans, (9*100+a_10*10+a_1)-(b_100*100+b_10*10+b_1))
+	ans = max(ans, ((a_100)*100+(9)*10+(a_1))-((b_100)*100+(b_10)*10+(b_1)))
+	ans = max(ans, ((a_100)*100+(a_10)*10+(9))-((b_100)*100+(b_10)*10+(b_1)))
+	ans = max(ans, ((a_100)*100+(a_10)*10+(a_1))-(1*100+(b_10)*10+(b_1)))
+	ans = max(ans, ((a_100)*100+(a_10)*10+(a_1))-((b_100)*100+(0)+(b_1)))
+	ans = max(ans, ((a_100)*100+(a_10)*10+(a_1))-((b_100)*100+(b_10)*10+(0)))
+
+	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
@@ -129,11 +128,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Less(i, j int) bool { return a[i][1] < a[j][1] }
 
 type PriorityQueue []int
 

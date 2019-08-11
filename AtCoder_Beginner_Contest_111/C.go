@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"math"
 	"os"
 	"strconv"
@@ -11,7 +12,7 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans int = 1e9
+var ans int
 
 func main() {
 	reader.Split(bufio.ScanWords)
@@ -21,8 +22,7 @@ func main() {
 		v[i], _ = strconv.Atoi(read())
 	}
 
-	v_odd := make(map[int]int)
-	v_even := make(map[int]int)
+	v_odd, v_even := make(map[int]int), make(map[int]int)
 	for i, value := range v {
 		if i%2 == 0 {
 			v_even[value]++
@@ -31,6 +31,71 @@ func main() {
 		}
 	}
 
+	// [key, count]
+	var even_max = [2][2]int{{0, 0}, {0, 0}}
+	var odd_max = [2][2]int{{0, 0}, {0, 0}}
+
+	for key, count := range v_even {
+		if even_max[0][0] < count {
+			even_max[1][0] = even_max[0][0]
+			even_max[1][1] = even_max[0][1]
+			even_max[0][0] = count
+			even_max[0][1] = key
+		} else if even_max[1][0] < count {
+			even_max[1][0] = count
+			even_max[1][1] = key
+		}
+	}
+	for key, count := range v_odd {
+		if odd_max[0][0] < count {
+			odd_max[1][0] = odd_max[0][0]
+			odd_max[1][1] = odd_max[0][1]
+			odd_max[0][0] = count
+			odd_max[0][1] = key
+		} else if odd_max[1][0] < count {
+			odd_max[1][0] = count
+			odd_max[1][1] = key
+		}
+	}
+
+	if odd_max[0][1] != even_max[0][1] {
+		for key, count := range v_even {
+			if key != even_max[0][1] {
+				ans += count
+			}
+		}
+		for key, count := range v_odd {
+			if key != odd_max[0][1] {
+				ans += count
+			}
+		}
+		fmt.Println(ans)
+	} else {
+		if odd_max[1][0] < even_max[1][0] {
+			for key, count := range v_even {
+				if key != even_max[1][1] {
+					ans += count
+				}
+			}
+			for key, count := range v_odd {
+				if key != odd_max[0][1] {
+					ans += count
+				}
+			}
+		} else {
+			for key, count := range v_even {
+				if key != even_max[0][1] {
+					ans += count
+				}
+			}
+			for key, count := range v_odd {
+				if key != odd_max[1][1] {
+					ans += count
+				}
+			}
+		}
+		fmt.Println(ans)
+	}
 }
 
 /*  ----------------------------------------  */

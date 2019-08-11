@@ -18,25 +18,34 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
+	_, _ = strconv.Atoi(read())
+	stc := make(SortBy, 0, 1e6)
+	cnt := make([]int, 1e6)
 	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
-		}
-		sum += abs(A[i])
+		s, _ := strconv.Atoi(read())
+		t, _ := strconv.Atoi(read())
+		c, _ := strconv.Atoi(read())
+		stc = append(stc, []int{s, t, c})
 	}
-
-	if cnt%2 == 0 {
-		fmt.Println(sum)
-	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
+	sort.Sort(stc)
+	for i := 0; i < len(stc)-1; i++ {
+		if stc[i][1] == stc[i+1][0] && stc[i][2] == stc[i+1][2] {
+			stc[i+1][0] = stc[i][0]
+			stc[i][0] = 0
 		}
-		fmt.Println(sum + A[0]*2)
 	}
+	// Imos Method
+	for i := 0; i < len(stc); i++ {
+		if stc[i][0] != 0 {
+			cnt[stc[i][0]-1]++
+			cnt[stc[i][1]]--
+		}
+	}
+	for i := 1; i < 1e6; i++ {
+		cnt[i] += cnt[i-1]
+		ans = max(ans, cnt[i])
+	}
+	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
@@ -48,11 +57,11 @@ func read() string {
 	return reader.Text()
 }
 
-func lcm(x, y int) int {
+func lcm(x, y uint64) uint64 {
 	return (x / gcd(x, y)) * y
 }
 
-func gcd(x, y int) int {
+func gcd(x, y uint64) uint64 {
 	if x%y == 0 {
 		return y
 	} else {
@@ -129,11 +138,17 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	if a[i][2] == a[j][2] {
+		return a[i][0] < a[j][0]
+	} else {
+		return a[i][2] < a[j][2]
+	}
+}
 
 type PriorityQueue []int
 

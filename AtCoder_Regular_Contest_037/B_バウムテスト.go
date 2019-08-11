@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -14,28 +13,63 @@ const pi = math.Pi
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
 var ans, cnt int
+var ptr = []int{}
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
-	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
+	M, _ := strconv.Atoi(read())
+	ptr = make([]int, N+1)
+	init_uf()
+	for i := 0; i < M; i++ {
+		u, _ := strconv.Atoi(read())
+		v, _ := strconv.Atoi(read())
+		u, v = root(u), root(v)
+		if u != v {
+			if u == 0 {
+				ptr[v] = u
+			} else {
+				ptr[u] = v
+			}
+		} else {
+			ptr[u] = 0
 		}
-		sum += abs(A[i])
 	}
-
-	if cnt%2 == 0 {
-		fmt.Println(sum)
-	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
+	for i := 1; i < len(ptr); i++ {
+		if ptr[i] == i {
+			ans++
 		}
-		fmt.Println(sum + A[0]*2)
+	}
+	fmt.Println(ans)
+}
+
+func init_uf() {
+	for i := 1; i < len(ptr); i++ {
+		ptr[i] = i
+	}
+}
+func root(x int) int {
+	if ptr[x] == x {
+		return x
+	} else {
+		ptr[x] = root(ptr[x])
+		return ptr[x]
+	}
+}
+func unit(x, y int) {
+	x = root(x)
+	y = root(y)
+	if x != y {
+		ptr[y] = x
+	}
+}
+func same(x, y int) bool {
+	x = root(x)
+	y = root(y)
+	if x == y {
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -129,11 +163,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
 
 type PriorityQueue []int
 

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -18,24 +17,24 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
+	var aoki, takahashi int
 	for i := 0; i < N; i++ {
-		A[i], _ = strconv.Atoi(read())
-		if A[i] < 0 {
-			cnt++
+		t := read()
+		for j := 0; j < N; j++ {
+			if string(t[j]) == "R" {
+				takahashi++
+			}
+			if string(t[j]) == "B" {
+				aoki++
+			}
 		}
-		sum += abs(A[i])
 	}
-
-	if cnt%2 == 0 {
-		fmt.Println(sum)
+	if takahashi < aoki {
+		fmt.Println("AOKI")
+	} else if takahashi > aoki {
+		fmt.Println("TAKAHASHI")
 	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+		fmt.Println("DRAW")
 	}
 }
 
@@ -129,11 +128,11 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Less(i, j int) bool { return a[i][1] < a[j][1] }
 
 type PriorityQueue []int
 
