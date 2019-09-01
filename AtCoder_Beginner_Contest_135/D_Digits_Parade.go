@@ -18,28 +18,29 @@ var ans, cnt int
 var dp = [13]int{}
 
 func main() {
-	input := bufio.NewReader(os.Stdin)
 	var S string
-	fmt.Fscanf(input, "%s\n", &S)
-
-	// 1234 % mod = ((1000%mod) + (200%mod) + (30%mod) + (4%mod))%mod
+	fmt.Scan(&S)
 
 	dp[0] = 1
 	for i := 0; i < len(S); i++ {
 		var nextdp = [13]int{}
-		num, _ := strconv.Atoi(string(S[i]))
+		t, _ := strconv.Atoi(string(S[i]))
+		for j := 0; j < 13; j++ {
+			if string(S[i]) == "?" {
+				for k := 0; k < 10; k++ {
+					nextdp[(j*10+k)%13] += dp[j]
+					nextdp[(j*10+k)%13] %= mod
 
-		for k := 0; k < 10; k++ {
-			if string(S[i]) == "?" || num == k {
-				for j := 0; j < 13; j++ {
-					nextdp[((j*10)+k)%13] += dp[j]
-					nextdp[((j*10)+k)%13] %= mod
 				}
+			} else {
+				nextdp[(j*10+t)%13] += dp[j]
+				nextdp[(j*10+t)%13] %= mod
 			}
 		}
 		dp = nextdp
 	}
 	fmt.Println(dp[5])
+
 }
 
 /*  ----------------------------------------  */

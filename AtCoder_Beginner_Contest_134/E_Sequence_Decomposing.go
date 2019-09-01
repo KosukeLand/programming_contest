@@ -17,33 +17,29 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-
-	A := make([]int, N)
-	arr := make([]int, 0, N)
+	A, B := make([]int, N), make([]int, 0, N)
 	for i := 0; i < N; i++ {
 		A[i], _ = strconv.Atoi(read())
 	}
 	for i := 0; i < N; i++ {
-		m := binary_tree(len(arr), -1, A[i], arr)
-		if m == len(arr) {
-			arr = append(arr, A[i])
+		insert := binary_tree(A[i], B)
+		if insert == len(B) {
+			B = append(B, A[i])
 		} else {
-			arr[m] = A[i]
+			B[insert] = A[i]
 		}
 	}
-	fmt.Println(len(arr))
+	fmt.Println(len(B))
 }
 
-func binary_tree(right, left, target int, a []int) int {
-	if len(a) == 0 {
-		return len(a)
-	}
-	for left < right-1 {
-		c := (left + right) / 2
-		if a[c] < target {
-			right = c
+func binary_tree(target int, arr []int) int {
+	var left, right = -1, len(arr)
+	for left+1 < right {
+		mid := (left + right) / 2
+		if arr[mid] < target {
+			right = mid
 		} else {
-			left = c
+			left = mid
 		}
 	}
 	return right

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -13,29 +12,27 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans, cnt int
+var ans, cnt, sum int
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	A := make(SortBy, N)
-	var sum int
+	A := make([]int, N)
+	var minus, A_min int = 0, 1e9
 	for i := 0; i < N; i++ {
 		A[i], _ = strconv.Atoi(read())
 		if A[i] < 0 {
-			cnt++
+			sum += A[i] * (-1)
+			minus++
+		} else {
+			sum += A[i]
 		}
-		sum += abs(A[i])
+		A_min = min(A_min, abs(A[i]))
 	}
-
-	if cnt%2 == 0 {
+	if minus%2 == 0 {
 		fmt.Println(sum)
 	} else {
-		sort.Sort(A)
-		if 0 < A[0] {
-			A[0] *= (-1)
-		}
-		fmt.Println(sum + A[0]*2)
+		fmt.Println(sum - A_min*2)
 	}
 }
 

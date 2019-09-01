@@ -6,7 +6,6 @@ import (
 	"math"
 	"os"
 	"strconv"
-	"strings"
 )
 
 const pi = math.Pi
@@ -20,77 +19,63 @@ func main() {
 	H, _ := strconv.Atoi(read())
 	W, _ := strconv.Atoi(read())
 	T, _ := strconv.Atoi(read())
-	v := make([]string, 0, H*W)
 
-	var start, goal int
+	str := make([]string, H*W)
 	for i := 0; i < H; i++ {
-		t := strings.Split(read(), "")
-		v = append(v, t...)
-
-		for j := 0; j < W; j++ {
-			if string(t[j]) == "S" {
-				start = i*W + j
-			}
-			if string(t[j]) == "G" {
-				goal = i*W + j
-			}
-		}
+		str[i] = read()
 	}
 
-	left, right := 0, T
+	var left, right, x int = -1, T + 1, 0
+	var S, G, p int
 	for left+1 < right {
-		x := (left + right) / 2
-
-		// ダイクストラ
-		used := make([]bool, H*W)
-		d := make([]int, H*W)
-		for i, _ := range d {
-			d[i] = 1e10
-		}
-		d[start] = 0
-
 		cost := make([][]int, H*W)
 		for i := 0; i < H*W; i++ {
 			cost[i] = make([]int, H*W)
-		}
-
-		for i := 0; i < H*W; i++ {
-			for j := i + 1; j < H*W; j++ {
-				if ((i+1)%W != 0 && i+1 == j) || i+W == j {
-					if v[j] == "#" {
-						cost[i][j] = x
-					} else {
-						cost[i][j] = 1
-					}
-
-					if v[i] == "#" {
-						cost[j][i] = x
-					} else {
-						cost[j][i] = 1
-					}
+			for j := 0; j < H*W; j++ {
+				if i == j {
+					cost[i][j] = 0
 				} else {
 					cost[i][j] = 1e10
-					cost[j][i] = 1e10
 				}
+			}
+		}
+		x = (left + right) / 2
+		for i := 0; i < H*W; i++ {
+			switch string(str[i/W][i%W]) {
+			case "#":
+				p = x
+			case ".":
+				p = 1
+			case "S":
+				S = i
+				p = 1
+			case "G":
+				G = i
+				p = 1
+			}
+
+			if 0 <= i-W {
+				cost[i-W][i] = p
+			}
+			if i+W < H*W {
+				cost[i+W][i] = p
+			}
+			if 0 <= i-1 && i%W != 0 {
+				cost[i-1][i] = p
+			}
+			if i+1 < H*W && (i+1)%W != 0 {
+				cost[i+1][i] = p
 			}
 		}
 
-		for {
-			u := -1
+		for k := 0; k < H*W; k++ {
 			for i := 0; i < H*W; i++ {
-				if !used[i] && (u == -1 || d[i] < d[u]) {
-					u = i
+				for j := 0; j < H*W; j++ {
+					cost[i][j] = min(cost[i][j], cost[i][k]+cost[k][j])
 				}
 			}
-			if u == -1 {
-				break
-			}
-			used[u] = true
-			for i := 0; i < H*W; i++ {
-				d[i] = min(d[i], d[u]+cost[u][i])
-			}
 		}
-		if d[goal] <= T {
+		if cost[S][G] <= T {
 			left = x
 		} else {
 			right = x

@@ -11,18 +11,31 @@ const pi = math.Pi
 
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var cnt int
+var cnt uint64
 
 func main() {
-	var N uint64
+	var N, i uint64
 	fmt.Scan(&N)
-	// 100x+10y+z+x+y+z = N
-	// 101x+11y+2z = N
-	fmt.Println(dfs(N))
-}
-var memo [][20]int
-func dfs(int x) {
-	if 
+	ans := make([]uint64, 0, 153)
+
+	// max: f(99999999999999999) = 9*17 = 153
+	if 153 < N {
+		i = N - 153
+	}
+	for ; i <= N; i++ {
+		var t, cnt uint64 = i, 0
+		for t != 0 {
+			cnt += t % 10
+			t /= 10
+		}
+		if i+cnt == N {
+			ans = append(ans, i)
+		}
+	}
+	fmt.Println(len(ans))
+	for _, value := range ans {
+		fmt.Println(value)
+	}
 }
 
 /*  ----------------------------------------  */

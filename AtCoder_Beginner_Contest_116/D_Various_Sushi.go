@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -16,42 +17,26 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	C, _ := strconv.Atoi(read())
-	xv := make([][]int, N)
+	K, _ := strconv.Atoi(read())
+	td := make([][]int, N)
 	for i := 0; i < N; i++ {
-		xv[i] = make([]int, 2)
-		xv[i][0], _ = strconv.Atoi(read())
-		xv[i][1], _ = strconv.Atoi(read())
+		t, _ := strconv.Atoi(read())
+		v, _ := strconv.Atoi(read())
+		td[t-1] = append(td[t-1], v)
 	}
-
-	var now int
 	for i := 0; i < N; i++ {
-
+		sort.Sort(sort.Reverse(sort.IntSlice(td[i])))
 	}
-}
+	var x, y int = 0, 1
+	for i := 0; i < N; i++ {
+		for j := 0; j < len(td[i]); j++ {
+			if j == 0 {
 
-func binary_tree_left(left, right, target int, arr [][]int) int {
-	for left+1 < right {
-		mid := (left + right) / 2
-		if arr[mid][0] <= target {
-			left = mid
-		} else {
-			right = mid
+			} else {
+
+			}
 		}
 	}
-	return left
-}
-
-func binary_tree_right(left, right, target int, arr [][]int) int {
-	for left+1 < right {
-		mid := (left + right) / 2
-		if arr[mid][0] < target {
-			left = mid
-		} else {
-			right = mid
-		}
-	}
-	return right
 }
 
 /*  ----------------------------------------  */
@@ -146,9 +131,11 @@ func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
 type SortBy []int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	return a[i] < a[j]
+}
 
 type PriorityQueue []int
 

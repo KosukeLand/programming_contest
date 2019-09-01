@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
@@ -20,25 +19,17 @@ func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
 	M, _ := strconv.Atoi(read())
-	arr := make(SortBy, N)
-
+	AB := make([][]int, 1e5+5)
 	for i := 0; i < N; i++ {
-		a, _ := strconv.Atoi(read())
-		b, _ := strconv.Atoi(read())
-		arr[i] = []int{a, b}
+		t, _ := strconv.Atoi(read())
+		v, _ := strconv.Atoi(read())
+		AB[t] = append(AB[t], v)
 	}
-	sort.Sort(arr)
-	var j int
 	pq := &PriorityQueue{}
 	heap.Init(pq)
-	for i := M - 1; 0 <= i; i-- {
-		for j < len(arr) {
-			if arr[j][0]+i <= M {
-				heap.Push(pq, arr[j][1])
-				j++
-			} else {
-				break
-			}
+	for i := 1; i <= M; i++ {
+		for j := 0; j < len(AB[i]); j++ {
+			heap.Push(pq, AB[i][j])
 		}
 		if pq.Len() != 0 {
 			ans += heap.Pop(pq).(int)

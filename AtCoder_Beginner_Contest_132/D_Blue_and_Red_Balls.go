@@ -1,27 +1,76 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math"
+	"os"
+	"strconv"
 )
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
+const pi = math.Pi
+
 var mod int = pow(10, 9) + 7
-var ans int
+var Umod uint64 = 1000000007
+var ans, cnt int
+
+// フェルマーの小定理
+// a^(p-1) = -1 (mod p)
+// a^(p-2) = -a^(-1) (mod p)
 
 func main() {
-	fmt.Scan(&N, &K)
-
-	red := N - K
-	blue := K
-
+	reader.Split(bufio.ScanWords)
+	N, _ := strconv.Atoi(read())
+	K, _ := strconv.Atoi(read())
 	for i := 1; i <= K; i++ {
-		ans = combination(red+1, i) * combination(blue-1, i-1) % mod
-		fmt.Println(ans)
+		fmt.Println(comb(N-K+1, i) * comb(K-1, i-1) % mod)
 	}
 }
 
+func comb(n, k int) int {
+	if n < k {
+		return 0
+	}
+	var a, b, c int = 1, 1, 1
+	// n!
+	for i := n; 0 < i; i-- {
+		a *= i % mod
+		a %= mod
+	}
+	// k!
+	for i := k; 0 < i; i-- {
+		b *= i % mod
+		b %= mod
+	}
+	for i := (n - k); 0 < i; i-- {
+		c *= i % mod
+		c %= mod
+	}
+	return a * (-1) * modpow(b, mod-2) % mod * (-1) * modpow(c, mod-2) % mod
+}
+
+// x^nを計算
+func modpow(x, n int) int {
+	if n == 1 {
+		return x
+	}
+	if n%2 == 0 {
+		x = modpow(x, n/2) % mod
+		x = x * x % mod
+	} else {
+		x = x * modpow(x, n-1) % mod
+	}
+	return x
+}
+
 /*  ----------------------------------------  */
+
+var reader = bufio.NewScanner(os.Stdin)
+
+func read() string {
+	reader.Scan()
+	return reader.Text()
+}
 
 func lcm(x, y int) int {
 	return (x / gcd(x, y)) * y
@@ -53,6 +102,7 @@ func combination_init() {
 	// -p%a = p/a*(a)             (mod p)
 	// -p%a *a^(-1)= p/a          (mod p)
 	// a^(-1)= p/a * (-p%a)^(-1)  (mod p)
+	// a^(-1) =
 
 	for i := 2; i < 1000000; i++ {
 		fac[i] = fac[i-1] * i % mod
@@ -103,8 +153,24 @@ func abs(x int) int    { return int(math.Abs(float64(x))) }
 func floor(x int) int  { return int(math.Floor(float64(x))) }
 func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
-type SortBy []int
+type SortBy [][]int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	return a[i][1] < a[j][1]
+}
+
+type PriorityQueue []int
+
+func (h PriorityQueue) Len() int            { return len(h) }
+func (h PriorityQueue) Less(i, j int) bool  { return h[i] < h[j] }
+func (h PriorityQueue) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }
+func (h *PriorityQueue) Push(x interface{}) { *h = append(*h, x.(int)) }
+func (h *PriorityQueue) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}

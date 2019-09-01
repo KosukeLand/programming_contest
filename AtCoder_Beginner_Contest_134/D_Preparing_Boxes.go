@@ -17,43 +17,39 @@ var cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-
-	a := make([]int, N+1)
-	ans := make([]int, N+1)
-
-	for i := 0; i < N; i++ {
-		a[i+1], _ = strconv.Atoi(read())
+	a, b := make([]int, N+1), make([]int, N+1)
+	for i := 1; i < N+1; i++ {
+		a[i], _ = strconv.Atoi(read())
 	}
-
-	for i := N; 1 <= i; i-- {
+	for i := N; 0 < i; i-- {
 		if N/2 < i {
-			ans[i] = a[i]
+			b[i] = a[i]
 		} else {
-			t := 0
-			for j := 2; j*i <= N; j++ {
-				if ans[j*i] == 1 {
-					t++
-				}
+			for j := i; j < N+1; j = j + i {
+				cnt += b[j]
 			}
-			if t%2 != a[i] {
-				ans[i] = 1
+			if cnt%2 == a[i] {
+				b[i] = 0
+			} else {
+				b[i] = 1
 			}
+			cnt = 0
 		}
 	}
-
-	for i := 1; i <= N; i++ {
-		if ans[i] == 1 {
-			cnt++
-		}
+	var sum int
+	for i := 1; i < N+1; i++ {
+		sum += b[i]
 	}
-	fmt.Println(cnt)
-	for i := 1; i <= N; i++ {
-		if ans[i] == 1 {
-			fmt.Printf("%d ", i)
+	if sum == 0 {
+		fmt.Println(0)
+	} else {
+		fmt.Println(sum)
+		for i := 1; i < N+1; i++ {
+			if b[i] == 1 {
+				fmt.Printf("%d ", i)
+			}
 		}
-		if i == N {
-			fmt.Println()
-		}
+		fmt.Printf("\n")
 	}
 }
 

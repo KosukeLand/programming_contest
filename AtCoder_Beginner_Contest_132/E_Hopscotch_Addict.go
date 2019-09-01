@@ -8,57 +8,48 @@ import (
 	"strconv"
 )
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
 var mod int = pow(10, 9) + 7
 var ans int
-var dist [100001][3]int
 
 func main() {
 	reader.Split(bufio.ScanWords)
-	N, _ = strconv.Atoi(read())
-	M, _ = strconv.Atoi(read())
-	v := make([][]int, N)
+	N, _ := strconv.Atoi(read())
+	M, _ := strconv.Atoi(read())
+	to := make([][]int, N+1)
 
 	for i := 0; i < M; i++ {
-		a, _ := strconv.Atoi(read())
-		b, _ := strconv.Atoi(read())
-		v[a-1] = append(v[a-1], b-1)
+		u, _ := strconv.Atoi(read())
+		v, _ := strconv.Atoi(read())
+		to[u] = append(to[u], v)
 	}
+	S, _ := strconv.Atoi(read())
+	T, _ := strconv.Atoi(read())
 
-	S, _ = strconv.Atoi(read())
-	T, _ = strconv.Atoi(read())
-	S--
-	T--
-
-	q := make([][]int, 0, N)
+	q := make([][]int, 0, 1e5+5)
 	q = append(q, []int{S, 0})
-	for i := 0; i < N; i++ {
-		for j := 0; j < 3; j++ {
-			dist[i][j] = 1e8
-		}
-	}
-	dist[S][0] = 0
-
-	/* BFS */
+	var m = [1e5 + 5][3]bool{}
+	m[S][0] = true
+	var step int
 	for len(q) != 0 {
-		t, l := q[0][0], q[0][1]
-		q = q[1:]
-
-		for _, value := range v[t] {
-			nl := (l + 1) % 3
-			if dist[value][nl] != 1e8 {
-				continue
+		l := len(q)
+		step++
+		for i := 0; i < l; i++ {
+			n, w := q[0][0], q[0][1]
+			q = q[1:]
+			for _, value := range to[n] {
+				if w == 2 && value == T {
+					fmt.Println(step / 3)
+					return
+				}
+				nl := (w + 1) % 3
+				if m[value][nl] == false {
+					m[value][nl] = true
+					q = append(q, []int{value, nl})
+				}
 			}
-			dist[value][nl] = dist[t][l] + 1
-			q = append(q, []int{value, nl})
 		}
 	}
-	if 1e8 <= dist[T][0] {
-		ans = -1
-	} else {
-		ans = dist[T][0] / 3
-	}
-	fmt.Println(ans)
+	fmt.Println(-1)
 }
 
 /*  ----------------------------------------  */

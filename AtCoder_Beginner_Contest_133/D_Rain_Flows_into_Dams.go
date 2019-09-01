@@ -10,37 +10,35 @@ import (
 
 const pi = math.Pi
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
 var mod int = pow(10, 9) + 7
 var Umod uint64 = 1000000007
-var ans int
+var ans, cnt, sum int
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	a := make([]int, N)
-
-	var sum, MAX_v, MAX_i int
+	A := make([]int, N)
 	for i := 0; i < N; i++ {
-		a[i], _ = strconv.Atoi(read())
-		sum += a[i]
-
-		if MAX_v < a[i] {
-			MAX_i = i
+		A[i], _ = strconv.Atoi(read())
+	}
+	for i := N - 1; 0 <= i; i-- {
+		if i%2 == 0 {
+			sum += A[i]
+		} else {
+			sum -= A[i]
 		}
 	}
-
-	m := make([]int, N)
-	m[(MAX_i-1)%N] = a[MAX_i]
-	m[(MAX_i+1)%N] = a[MAX_i]
-	sum -= a[MAX_i] * 2
-	fmt.Println(m)
-	for i := 0; i < N; i++ {
-		if (i != (MAX_i)%N && i != (MAX_i+1)%N) && sum != 0 {
-			m[i] += a[i] / 2
+	t := sum
+	fmt.Printf("%d ", sum)
+	for i := 0; i < N-1; i++ {
+		ans = 2*A[i] - t
+		t = ans
+		if i == N-2 {
+			fmt.Printf("%d\n", ans)
+		} else {
+			fmt.Printf("%d ", ans)
 		}
 	}
-	fmt.Println(m)
 }
 
 /*  ----------------------------------------  */

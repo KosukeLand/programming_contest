@@ -18,7 +18,7 @@ var ans, cnt int
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-	red := make(SortBy, N)
+	red := make([][]int, N)
 	blue := make(SortBy, N)
 
 	for i := 0; i < N; i++ {
@@ -33,29 +33,23 @@ func main() {
 		blue[i][0], _ = strconv.Atoi(read())
 		blue[i][1], _ = strconv.Atoi(read())
 	}
-	sort.Sort(red)
 	sort.Sort(blue)
-
 	for i := 0; i < N; i++ {
-		var pair, min_y int = -1, 0
-
+		bx, by := blue[i][0], blue[i][1]
+		best_y, delete_dot := -1, -1
 		for j := 0; j < N; j++ {
-			if red[i][0] < blue[j][0] && red[i][1] < blue[j][1] {
-				dis_y := blue[j][1] - red[i][1]
-
-				if min_y < dis_y {
-					pair = j
-					min_y = dis_y
-				}
+			rx, ry := red[j][0], red[j][1]
+			if rx < bx && ry < by && best_y < ry {
+				best_y = ry
+				delete_dot = j
 			}
 		}
-		if pair != -1 {
-			blue[pair][0], blue[pair][1] = -1, -1
-			cnt++
+		if delete_dot != -1 {
+			ans++
+			red[delete_dot][0] = 1e9
 		}
 	}
-
-	fmt.Println(cnt)
+	fmt.Println(ans)
 }
 
 /*  ----------------------------------------  */
@@ -150,9 +144,14 @@ func ceil(x int) int   { return int(math.Ceil(float64(x))) }
 
 type SortBy [][]int
 
-func (a SortBy) Len() int           { return len(a) }
-func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i][0] < a[j][0] }
+func (a SortBy) Len() int      { return len(a) }
+func (a SortBy) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a SortBy) Less(i, j int) bool {
+	if a[i][0] == a[j][0] {
+		return a[i][1] < a[j][1]
+	}
+	return a[i][0] < a[j][0]
+}
 
 type PriorityQueue []int
 

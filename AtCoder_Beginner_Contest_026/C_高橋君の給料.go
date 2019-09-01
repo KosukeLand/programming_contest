@@ -5,41 +5,36 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 )
 
-var A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z int
-var mod int = pow(10, 9) + 7
-var pi float64 = math.Pi
+const pi = math.Pi
 
-var ans float64 = 0
-var cnt int
+var mod int = pow(10, 9) + 7
+var Umod uint64 = 1000000007
+var ans, cnt, sum int
 
 func main() {
 	reader.Split(bufio.ScanWords)
 	N, _ := strconv.Atoi(read())
-
-	b := make([][]int, N+1)
-	for i := 2; i <= N; i++ {
+	B := make([][]int, N)
+	for i := 0; i < N-1; i++ {
 		t, _ := strconv.Atoi(read())
-		b[t] = append(b[t], i)
+		B[t-1] = append(B[t-1], i+1)
 	}
-	fmt.Println(dfs(b, 1))
+	fmt.Println(dfs(0, B))
 }
-
-func dfs(b [][]int, n int) int {
-	if len(b[n]) == 0 {
+func dfs(n int, B [][]int) int {
+	if len(B[n]) == 0 {
 		return 1
-	} else {
-		res := make([]int, len(b[n]))
-		for i := 0; i < len(b[n]); i++ {
-			res[i] = dfs(b, b[n][i])
-
-		}
-		sort.Ints(res)
-		return res[0] + res[len(res)-1] + 1
 	}
+	var Min, Max int = 1e9, 0
+	for i := 0; i < len(B[n]); i++ {
+		t := dfs(B[n][i], B)
+		Min = min(Min, t)
+		Max = max(Max, t)
+	}
+	return Min + Max + 1
 }
 
 /*  ----------------------------------------  */
@@ -81,6 +76,7 @@ func combination_init() {
 	// -p%a = p/a*(a)             (mod p)
 	// -p%a *a^(-1)= p/a          (mod p)
 	// a^(-1)= p/a * (-p%a)^(-1)  (mod p)
+	// a^(-1) =
 
 	for i := 2; i < 1000000; i++ {
 		fac[i] = fac[i-1] * i % mod
@@ -135,7 +131,7 @@ type SortBy []int
 
 func (a SortBy) Len() int           { return len(a) }
 func (a SortBy) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a SortBy) Less(i, j int) bool { return a[i] > a[j] }
+func (a SortBy) Less(i, j int) bool { return abs(a[i]) < abs(a[j]) }
 
 type PriorityQueue []int
 
